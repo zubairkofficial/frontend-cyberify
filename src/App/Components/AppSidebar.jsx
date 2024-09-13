@@ -1,10 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Helper from "../Config/Helper";
 import Allowed from "./Allowed";
 
 
 const SidebarItem = ({ icon, name, link = "#", isLogout = false }) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const logout = e => {
         e.preventDefault();
@@ -25,7 +26,7 @@ const SidebarItem = ({ icon, name, link = "#", isLogout = false }) => {
     }else{
         return (
             <Link to={link} data-kt-menu-trigger="click" class="menu-item menu-accordion">
-                <span class="menu-link">
+                <span class={`menu-link ${location.pathname === link ? 'current' : ''}`}>
                     <span class="menu-icon"><i class={icon}></i></span>
                     <span class="menu-title">{name}</span>
                 </span>
@@ -62,6 +63,10 @@ const AppSidebar = () => {
                         <Allowed roles={["admin"]}><SidebarItem name={"Bidding Stats"} icon={"fa-light fa-list-ol"} link="/user/biddings-stats" /></Allowed>
                         <Allowed roles={["bidder"]}><SidebarItem name={"Bidding"} icon={"fa-light fa-gavel"} link="/user/biddings" /></Allowed>
                         <Allowed roles={["bidder", "admin"]}><SidebarItem name={"Bid Response"} icon={"fa-light fa-pen"} link="/user/bid-response" /></Allowed>
+                        <Allowed roles={["admin"]}><SidebarItem name={"Services"} icon={"fa-light fa-list-check"} link="/user/services" /></Allowed>
+                        <Allowed roles={["admin"]}><SidebarItem name={"Use Cases"} icon={"fa-light fa-briefcase"} link="/user/use-cases" /></Allowed>
+                        <Allowed roles={["admin"]}><SidebarItem name={"Blog Categories"} icon={"fa-light fa-layer-group"} link="/user/blog-categories" /></Allowed>
+                        <Allowed roles={["admin"]}><SidebarItem name={"Blogs"} icon={"fa-light fa-file-lines"} link="/user/blogs" /></Allowed>
                         <SidebarItem name={"Logout"} icon={"fa-light fa-right-from-bracket"} isLogout={true} />
                     </div>
                 </div>

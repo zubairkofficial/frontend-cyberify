@@ -62,8 +62,12 @@ class Helper {
     return imageUrl;
   }
 
-  static replaceSpaces(str) {
-    return str.replace(/ /g, '-');
+  static replaceSpaces(str, small = false) {
+    let updatedString = str.replace(/ /g, '-');
+    if(small){
+      updatedString = updatedString.toLowerCase();
+    }
+    return updatedString;
   }
 
   static loadScript(scriptName, dashboard = false) {
@@ -223,6 +227,12 @@ class Helper {
 
     return chunked;
   }
+
+  static copyText = text => {
+    navigator.clipboard.writeText(text);
+    this.toast("success", "Copied");
+  }
+
 }
 
 export default Helper;

@@ -15,6 +15,20 @@ body{
     transition: 0.5s;
 }
 
+.btn-default{
+    background-color: #fcf9f9 !important;
+    color: #413f3f !important;
+    border: 1px solid #fcf9f9 !important;
+    transition: 0.5s;
+}
+
+.btn-default:hover{
+    background-color: #eee7e7 !important;
+    color: #413f3f !important;
+    border: 1px solid #eee7e7 !important;
+    transition: 0.5s;
+}
+
 .btn-primary:focus, .btn-primary:active{
     color: #F57C00 !important;
 }
@@ -226,4 +240,98 @@ option{
 .active-page:hover{
     background-color: #dd6f00 !important;
     color: white;
+}
+
+.service-icon{
+    height: 50px;
+    border-radius: 10px;
+}
+
+.service-image{
+    height: 200px;
+}
+
+.btn-dropdown{
+    border: none;
+    padding: 5px 10px 3px 10px;
+    border-radius: 5px;
+}
+
+.dropdown{
+    padding: 10px 10px;
+    margin-top: -7px;
+    position: absolute;
+    right: 10px;
+    box-shadow: 3px 3px 10.5px -3px #dddddd !important;
+    text-align: left;
+}
+
+.dropdown-link{
+    padding: 5px 10px;
+    color: #413f3f;
+    border-radius: 7px;
+    background: none;
+    border: none;
+}
+
+.dropdown-link:hover{
+    background-color: #f8f4f4;
+}
+
+.ml5{
+    margin-left: 5px;
+}
+
+.text-danger{
+    color: red !important;
+}
+
+.image-outer-placeholder{
+    background-color: #f7f2f2;
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    cursor: pointer;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.image-placeholder{
+    width: 100%;
+    padding: 50px 120px;
+    transition: 0.5s;
+}
+
+.image-outer-placeholder:hover .image-placeholder {
+    opacity: 0.7;
+}
+
+.file-input{
+    display: none;
+}
+
+.menu-link.current{
+    background: #f7f2f2 !important;
+}
+
+a{
+    color: #dd6f00;
+}
+
+.usecase-thumbnail{
+    width: 100%;
+    border-radius: 20px;
+    height: 400px;
+    object-fit: contain;
+}
+
+.blog-featured-image{
+    height: auto;
+    width: 100%;
+    border-radius: 10px;
 }

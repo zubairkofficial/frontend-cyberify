@@ -17,6 +17,16 @@ import Biddings from './App/Pages/Bidding'
 import CreateBidding from './App/Pages/Bidding/CreateBidding'
 import BiddingTeam from './App/Pages/BiddingTeam'
 import BidResponse from './App/Pages/BidResponse'
+import Services from './App/Pages/Services'
+import ServiceView from './App/Pages/Services/ServiceView'
+import Service from './App/Pages/Services/Service'
+import UseCases from './App/Pages/UseCases'
+import UseCaseView from './App/Pages/Usecases/UseCaseView'
+import UseCase from './App/Pages/Usecases/UseCase'
+import Blogs from './App/Pages/Blogs'
+import Blog from './App/Pages/Blogs/Blog'
+import BlogCategories from './App/Pages/BlogCategories'
+import ViewBlog from './App/Pages/Blogs/ViewBlog'
 
 const Auth = ({ children, isAuth = true }) => {
   let user = Helper.getItem('user', true);
@@ -56,6 +66,23 @@ function App() {
           <Route path="/user/biddings" element={<Auth><Biddings /></Auth>} />
           <Route path="/user/biddings/create" element={<Auth><CreateBidding /></Auth>} />
           <Route path="/user/bid-response" element={<Auth><BidResponse /></Auth>} />
+          
+          <Route path="/user/services" element={<Auth><Services /></Auth>} />
+          <Route path="/user/service/create" element={<Auth><Service /></Auth>} />
+          <Route path="/user/service/edit/:id/:name" element={<Auth><Service /></Auth>} />
+          <Route path="/user/service/view/:id/:name" element={<Auth><ServiceView /></Auth>} />
+
+          <Route path="/user/use-cases" element={<Auth><UseCases /></Auth>} />
+          <Route path="/user/use-case/create" element={<Auth><UseCase /></Auth>} />
+          <Route path="/user/use-case/edit/:id/:name" element={<Auth><UseCase /></Auth>} />
+          <Route path="/user/use-case/view/:id/:name" element={<Auth><UseCaseView /></Auth>} />
+
+          <Route path="/user/blog-categories" element={<Auth><BlogCategories /></Auth>} />
+
+          <Route path="/user/blogs" element={<Auth><Blogs /></Auth>} />
+          <Route path="/user/create-blog" element={<Auth><Blog /></Auth>} />
+          <Route path="/user/blog/edit/:id/:slug" element={<Auth><Blog /></Auth>} />
+          <Route path="/user/blog/view/:id/:slug" element={<Auth><ViewBlog /></Auth>} />
         </Route>
       </Routes>
     </BrowserRouter>
