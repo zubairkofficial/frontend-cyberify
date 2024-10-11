@@ -100,7 +100,7 @@ const BidResponse = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Generate Response"}></Toolbar>
             <MainContent>
                 <FullRow>

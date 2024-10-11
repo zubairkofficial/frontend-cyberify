@@ -18964,6 +18964,24 @@ fieldset:disabled .btn {
     .column-gap-md-4 {
         column-gap: 1rem !important
     }
+    .no-pointer{
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    .history_li{
+        border: 2px solid rgb(228, 228, 228);
+        transition:.15s
+    }
+    .history_li_active{
+        border: 2px solid rgb(192, 192, 192);
+        transition:.15s
+    }
+    .history_li_active:hover{
+        border: 2px solid black;
+    }
+    .history_li:hover{
+        border: 2px solid black;
+    }
     .column-gap-md-5 {
         column-gap: 1.25rem !important
     }

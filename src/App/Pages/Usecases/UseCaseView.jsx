@@ -39,15 +39,15 @@ const UseCaseView = () => {
     
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={id ? `Update Use Case` : "Create New Use Case"}>
-                <Link to="/user/use-cases" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/use-cases" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Use Cases
                 </Link>
-                <Link to={`/user/use-case/edit/${id}/${name}`} class="btn btn-sm btn-flex btn-default fw-bold ml-10">
+                <Link to={`/user/use-case/edit/${id}/${name}`} className="btn btn-sm btn-flex btn-default fw-bold ml-10">
                     <i className="fa-light fa-pen-to-square"></i> Edit Use Case
                 </Link>
-                <button onClick={() => deleteUsecase(id)} class="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
+                <button onClick={() => deleteUsecase(id)} className="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
                     <i className="fa-light fa-trash"></i> Delete Use Case
                 </button>
             </Toolbar>

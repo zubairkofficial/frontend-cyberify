@@ -28,23 +28,23 @@ const Blogs = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"All Blogs"}>
-                <Link to="/user/create-blog" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/create-blog" className="btn btn-sm btn-flex btn-primary fw-bold">
                     Create Blog Article
                 </Link>
             </Toolbar>
             <MainContent>
                 <FullRow>
                     <Card>
-                        {blogs.length > 0 ? <table class="table align-middle table-row-dashed fs-7 gy-5">
+                        {blogs.length > 0 ? <table className="table align-middle table-row-dashed fs-7 gy-5">
                             <thead>
-                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                <tr className="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                     <th>Image</th>
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Created At</th>
-                                    <th class="text-end">Actions</th>
+                                    <th className="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -57,7 +57,7 @@ const KeyPoints = ({ id, keypoints = [], getUsecase }) => {
                 <button className="btn btn-sm btn-outline-danger ml5" onClick={() => {setKeypoint(defaultKeypoint);setShowKeypointForm(false)}}>Cancel</button>
             </Card>}
             {!showKeypointForm && <Card className='mt-5'>
-                <table class="table align-middle table-row-dashed fs-7 gy-5">
+                <table className="table align-middle table-row-dashed fs-7 gy-5">
                     {keypoints && keypoints.map(keypoint => {
                         return (<tr key={keypoint.id}>
                             <td>{keypoint.point}</td>

@@ -29,24 +29,24 @@ const UseCases = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Use Cases"}>
-                <Link to="/user/use-case/create" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/use-case/create" className="btn btn-sm btn-flex btn-primary fw-bold">
                     Create Use Case
                 </Link>
             </Toolbar>
             <MainContent>
                 <FullRow>
                     <Card>
-                        {useCases.length > 0 ? <table class="table align-middle table-row-dashed fs-7 gy-5">
+                        {useCases.length > 0 ? <table className="table align-middle table-row-dashed fs-7 gy-5">
                             <thead>
-                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                <tr className="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                     <th>Thumbnail</th>
                                     <th>Use Case</th>
                                     <th>Service</th>
                                     <th>Industry</th>
                                     <th>Stacks</th>
-                                    <th class="text-end">Actions</th>
+                                    <th className="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>

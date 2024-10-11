@@ -65,15 +65,15 @@ const ServiceView = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={service.name}>
-                <Link to="/user/services" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/services" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Services
                 </Link>
-                <Link to={`/user/service/edit/${id}/${name}`} class="btn btn-sm btn-flex btn-default fw-bold ml-10">
+                <Link to={`/user/service/edit/${id}/${name}`} className="btn btn-sm btn-flex btn-default fw-bold ml-10">
                     <i className="fa-light fa-pen-to-square"></i> Edit Service
                 </Link>
-                <button onClick={() => deleteService(id)} class="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
+                <button onClick={() => deleteService(id)} className="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
                     <i className="fa-light fa-trash"></i> Delete Service
                 </button>
             </Toolbar>
@@ -103,7 +103,7 @@ const ServiceView = () => {
                                         <button className="btn btn-sm btn-outline-danger ml5" onClick={() => {setFeature(defaultFeature);setShowFeatureForm(false)}}>Cancel</button>
                                     </Card>}
                                     {!showFeatureForm && <Card className='mt-5'>
-                                        <table class="table align-middle table-row-dashed fs-7 gy-5">
+                                        <table className="table align-middle table-row-dashed fs-7 gy-5">
                                             {service.service_points && service.service_points.map(single_point => {
                                                 return (<tr key={single_point.id}>
                                                     <td>{single_point.name}</td>

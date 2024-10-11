@@ -119,9 +119,9 @@ const Blog = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Blog Article"}>
-                <Link to="/user/blogs" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/blogs" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Blogs
                 </Link>
             </Toolbar>
@@ -193,7 +193,7 @@ const Blog = () => {
                                     </Column>
                                 </Row>
                                 <FullRow>
-                                    <table class="table align-middle table-row-dashed fs-7 gy-5">
+                                    <table className="table align-middle table-row-dashed fs-7 gy-5">
                                         <thead>
                                             <tr>
                                                 <th>Image</th>

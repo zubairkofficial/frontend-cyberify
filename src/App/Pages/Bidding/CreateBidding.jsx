@@ -126,9 +126,9 @@ const CreateBidding = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={job_id ? `Update ${job.name}` : "Create New Bidding"}>
-                <Link to={`/user/${user_type === 'admin' ? 'biddings-stats' : 'biddings'}`} class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to={`/user/${user_type === 'admin' ? 'biddings-stats' : 'biddings'}`} className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Biddings
                 </Link>
             </Toolbar>

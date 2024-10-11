@@ -170,7 +170,7 @@ const TaskViewer = ({ taskId, refreshTasks }) => {
                 </Row>
                 <Row isCenter={true}>
                     <Column cols={4}>
-                        <p className="mb0"><i class="fa-light fa-calendar"></i> <strong>Start Date</strong></p>
+                        <p className="mb0"><i className="fa-light fa-calendar"></i> <strong>Start Date</strong></p>
                     </Column>
                     <Column cols={8}>
                         <p className="mb0"><Moment format="MMMM Do YYYY">{task.started_date}</Moment></p>
@@ -182,7 +182,7 @@ const TaskViewer = ({ taskId, refreshTasks }) => {
                 <br />
                 <Row isCenter={true}>
                     <Column cols={4}>
-                        <p className="mb0"><i class="fa-light fa-alarm-clock"></i> <strong>Due Date</strong></p>
+                        <p className="mb0"><i className="fa-light fa-alarm-clock"></i> <strong>Due Date</strong></p>
                     </Column>
                     <Column cols={4}>
                         <p className="mb0"><Moment format="MMMM Do YYYY">{task.due_date}</Moment></p>
@@ -193,7 +193,7 @@ const TaskViewer = ({ taskId, refreshTasks }) => {
                 </Row>
                 {task.completed_date && <><br /><Row isCenter={true}>
                     <Column cols={4}>
-                        <p className="mb0"><i class="fa-light fa-circle-check"></i> <strong>Completed Date</strong></p>
+                        <p className="mb0"><i className="fa-light fa-circle-check"></i> <strong>Completed Date</strong></p>
                     </Column>
                     <Column cols={4}>
                         <p className="mb0"><Moment format="MMMM Do YYYY">{task.completed_date}</Moment></p>
@@ -204,7 +204,7 @@ const TaskViewer = ({ taskId, refreshTasks }) => {
                 </Row></>}
                 {task.approved_date && <><br /><Row isCenter={true}>
                     <Column cols={4}>
-                        <p className="mb0"><i class="fa-light fa-check-double"></i> <strong>Approved Date</strong></p>
+                        <p className="mb0"><i className="fa-light fa-check-double"></i> <strong>Approved Date</strong></p>
                     </Column>
                     <Column cols={8}>
                         <p className="mb0"><Moment format="MMMM Do YYYY">{task.approved_date}</Moment></p>

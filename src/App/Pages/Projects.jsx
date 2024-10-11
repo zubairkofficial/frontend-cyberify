@@ -27,10 +27,10 @@ const Projects = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Projects"}>
                 <Allowed roles={['admin']}>
-                    <Link to="/user/projects/create" class="btn btn-sm btn-flex btn-primary fw-bold">
+                    <Link to="/user/projects/create" className="btn btn-sm btn-flex btn-primary fw-bold">
                         Create Project
                     </Link>
                 </Allowed>
@@ -40,17 +40,17 @@ const Projects = () => {
                     {projects.length > 0 ? projects.map(project => {
                         return (
                             <Column key={project.id} cols={4}>
-                                <Link to={`/user/project/${project.id}/${Helper.replaceSpaces(project.name)}`} class="card border-hover-primary ">
-                                    <div class="card-header border-0 pt-9">
-                                        <div class="card-title m-0">
-                                            <div class="fs-3 fw-bold text-gray-900">{ project.name }</div>
+                                <Link to={`/user/project/${project.id}/${Helper.replaceSpaces(project.name)}`} className="card border-hover-primary ">
+                                    <div className="card-header border-0 pt-9">
+                                        <div className="card-title m-0">
+                                            <div className="fs-3 fw-bold text-gray-900">{ project.name }</div>
                                         </div>
-                                        <div class="card-toolbar">
-                                            <span class="badge badge-light-primary fw-bold me-auto px-4 py-3">{Helper.convertOption(project.status)}</span>
+                                        <div className="card-toolbar">
+                                            <span className="badge badge-light-primary fw-bold me-auto px-4 py-3">{Helper.convertOption(project.status)}</span>
                                         </div>
                                     </div>
-                                    <div class="card-body p-9">
-                                        <p class="text-gray-500 fw-semibold fs-5 mt-1 mb-2">{ project.description }</p>
+                                    <div className="card-body p-9">
+                                        <p className="text-gray-500 fw-semibold fs-5 mt-1 mb-2">{ project.description }</p>
                                         <p className="mb-5">Project Manager <strong>{project.project_manager.name}</strong></p>
                                         <Row>
                                             <Column cols={6}><strong>Started</strong> <Moment format="MMMM Do YYYY">{project.started_date}</Moment></Column>

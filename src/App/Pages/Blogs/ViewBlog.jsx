@@ -34,15 +34,15 @@ const ViewBlog = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={blog.title}>
-                <Link to="/user/blogs" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/blogs" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Blogs
                 </Link>
-                <Link to={`/user/blog/edit/${id}/${slug}`} class="btn btn-sm btn-flex btn-default fw-bold ml-10">
+                <Link to={`/user/blog/edit/${id}/${slug}`} className="btn btn-sm btn-flex btn-default fw-bold ml-10">
                     <i className="fa-light fa-pen-to-square"></i> Edit Blog
                 </Link>
-                <button onClick={() => deleteBlog(id)} class="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
+                <button onClick={() => deleteBlog(id)} className="btn btn-sm btn-flex btn-outline-danger fw-bold ml-10">
                     <i className="fa-light fa-trash"></i> Delete Blog
                 </button>
             </Toolbar>

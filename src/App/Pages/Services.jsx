@@ -31,23 +31,23 @@ const Services = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Services"}>
-                <Link to="/user/service/create" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/service/create" className="btn btn-sm btn-flex btn-primary fw-bold">
                     Create Service
                 </Link>
             </Toolbar>
             <MainContent>
                 <FullRow>
                     <Card>
-                        {services.length > 0 ? <table class="table align-middle table-row-dashed fs-7 gy-5">
+                        {services.length > 0 ? <table className="table align-middle table-row-dashed fs-7 gy-5">
                             <thead>
-                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                <tr className="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                     <th>Icon</th>
                                     <th>Service Name</th>
                                     <th>Image</th>
                                     <th>Short Description</th>
-                                    <th class="text-end">Actions</th>
+                                    <th className="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -60,7 +60,7 @@ const Services = () => {
                                             <td>{ service.name }</td>
                                             <td><img className="service-icon" src={ Helper.serverImage(service.image2) } /></td>
                                             <td>{ service.description }</td>
-                                            <td class="text-end">
+                                            <td className="text-end">
                                                 <Dropdown>
                                                     <DropdownLink link={`/user/service/view/${service.id}/${Helper.replaceSpaces(service.name)}`} text={'View'} />
                                                     <DropdownLink text={'Edit'} link={`/user/service/edit/${service.id}/${Helper.replaceSpaces(service.name)}`} />

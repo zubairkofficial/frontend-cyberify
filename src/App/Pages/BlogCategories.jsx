@@ -42,7 +42,7 @@ const BlogCategories = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Blog Categories"} />
             <MainContent>
                 {showCategoryForm && <BlogCategory getCategories={getCategories} editingCategory={editingCategory} setShowCategoryForm={setShowCategoryForm} />}
@@ -53,18 +53,18 @@ const BlogCategories = () => {
                                 <h3>All Blog Categories</h3>
                             </Column>
                             <Column cols={6} className="text-end">
-                                <button class="btn btn-sm btn-flex btn-primary fw-bold" onClick={() => setShowCategoryForm(true)}>
+                                <button className="btn btn-sm btn-flex btn-primary fw-bold" onClick={() => setShowCategoryForm(true)}>
                                     Create Blog Category
                                 </button>
                             </Column>
                         </Row>
-                        {categories.length > 0 ? <table class="table align-middle table-row-dashed fs-7 gy-5">
+                        {categories.length > 0 ? <table className="table align-middle table-row-dashed fs-7 gy-5">
                             <thead>
-                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                <tr className="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Short Description</th>
-                                    <th class="text-end">Actions</th>
+                                    <th className="text-end">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,7 +76,7 @@ const BlogCategories = () => {
                                             </td>
                                             <td>{ category.name }</td>
                                             <td>{ category.description }</td>
-                                            <td class="text-end">
+                                            <td className="text-end">
                                                 <Dropdown>
                                                     <DropdownLink text={'Edit'} onClick={() => editCategory(category)} isbutton={true} />
                                                     <DropdownLink text={'Delete'} isdanger={true} onClick={() => deleteCategory(category.id)} isbutton={true} />

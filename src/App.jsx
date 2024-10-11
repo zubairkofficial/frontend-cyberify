@@ -27,6 +27,11 @@ import Blogs from './App/Pages/Blogs'
 import Blog from './App/Pages/Blogs/Blog'
 import BlogCategories from './App/Pages/BlogCategories'
 import ViewBlog from './App/Pages/Blogs/ViewBlog'
+import Settings from './App/Pages/Settings'
+import KnowledgeBase from './App/Pages/KnowledgeBase'
+import ApiKeys from './App/Pages/ApiKeys'
+import ErrorPage from './App/Pages/ErrorPage'
+import CoverLetterTemplates from './App/Pages/CoverLetterTemplates'
 
 const Auth = ({ children, isAuth = true }) => {
   let user = Helper.getItem('user', true);
@@ -53,6 +58,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+      <Route path="*" element={<ErrorPage />} />
         <Route path='/' element={<Auth isAuth={false}><Login /></Auth>} />
         <Route path="/user" element={<AppLayout />}>
           <Route path="/user/dashboard" element={<Auth><Home /></Auth>} />
@@ -80,6 +86,10 @@ function App() {
           <Route path="/user/blog-categories" element={<Auth><BlogCategories /></Auth>} />
 
           <Route path="/user/blogs" element={<Auth><Blogs /></Auth>} />
+          <Route path="/user/settings/:chat_slug?" element={<Auth><Settings /></Auth>} />
+          <Route path="/user/knowledgebase" element={<Auth><KnowledgeBase /></Auth>} />
+          <Route path="/user/apikeys" element={<Auth><ApiKeys /></Auth>} />
+          <Route path="/user/cover-letters" element={<Auth><CoverLetterTemplates /></Auth>} />
           <Route path="/user/create-blog" element={<Auth><Blog /></Auth>} />
           <Route path="/user/blog/edit/:id/:slug" element={<Auth><Blog /></Auth>} />
           <Route path="/user/blog/view/:id/:slug" element={<Auth><ViewBlog /></Auth>} />

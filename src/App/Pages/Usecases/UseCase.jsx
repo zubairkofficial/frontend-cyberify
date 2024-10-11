@@ -69,9 +69,9 @@ const UseCase = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={id ? `Update Use Case` : "Create New Use Case"}>
-                <Link to="/user/use-cases" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/use-cases" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Use Cases
                 </Link>
             </Toolbar>

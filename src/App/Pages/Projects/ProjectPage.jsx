@@ -56,9 +56,9 @@ const ProjectPage = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={pageLoading ? "Project Name" : project.name}>
-                <Link to="/user/projects" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/projects" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Projects
                 </Link>
             </Toolbar>
@@ -66,15 +66,15 @@ const ProjectPage = () => {
                 <Row>
                     <Column cols={8}>
                         <Card>
-                            <table class="table align-middle table-row-dashed fs-7 gy-5">
+                            <table className="table align-middle table-row-dashed fs-7 gy-5">
                                 <thead>
-                                    <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                    <tr className="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                                         <th className="w-50">Name</th>
                                         <th>Assignee</th>
                                         <th>Due Date</th>
                                         <th>Priority</th>
                                         <th>Status</th>
-                                        <th class="text-end"></th>
+                                        <th className="text-end"></th>
                                     </tr>
                                 </thead>
                                 <tbody>

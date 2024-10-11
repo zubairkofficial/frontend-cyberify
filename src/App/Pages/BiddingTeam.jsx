@@ -134,9 +134,9 @@ const BiddingTeam = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Biddings Stats"}>
-                <Link to="/user/biddings/create" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/biddings/create" className="btn btn-sm btn-flex btn-primary fw-bold">
                     Add New Bidding
                 </Link>
             </Toolbar>
@@ -245,9 +245,9 @@ const BiddingTeam = () => {
                             title="Job Applied"
                             description={`Total Jobs: ${stats.jobs_applied}`}
                         >
-                            <table class="table align-middle table-row-dashed fs-8 gy-5">
+                            <table className="table align-middle table-row-dashed fs-8 gy-5">
                                 <thead>
-                                    <tr class="text-start text-muted fw-bold fs-8 text-uppercase gs-0">
+                                    <tr className="text-start text-muted fw-bold fs-8 text-uppercase gs-0">
                                         <th className="w-25">Job Title</th>
                                         <th>Bidder</th>
                                         <th>Type</th>
@@ -259,7 +259,7 @@ const BiddingTeam = () => {
                                         <th>Profile</th>
                                         <th>Spending</th>
                                         <th>{dateType === 'created_at' ? 'Date' : 'Last Updated'}</th>
-                                        <th class="text-end">Status</th>
+                                        <th className="text-end">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>

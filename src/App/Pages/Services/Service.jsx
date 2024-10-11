@@ -59,9 +59,9 @@ const Service = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={id ? `Update Service` : "Create New Service"}>
-                <Link to="/user/services" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/services" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Services
                 </Link>
             </Toolbar>

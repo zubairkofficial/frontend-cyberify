@@ -60,9 +60,9 @@ const AddTeamMember = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={user_id ? `Update ${ member.name }` : "Add Team Member"}>
-                <Link to="/user/team" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/team" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Team Members
                 </Link>
             </Toolbar>

@@ -59,7 +59,7 @@ const Achievements = ({ id, achievements = [], getUsecase }) => {
                 <button className="btn btn-sm btn-outline-danger ml5" onClick={() => {setAchievement(defaultAchievement);setShowAchievementForm(false)}}>Cancel</button>
             </Card>}
             {!showAchievementForm && <Card className='mt-5'>
-                <table class="table align-middle table-row-dashed fs-7 gy-5">
+                <table className="table align-middle table-row-dashed fs-7 gy-5">
                     {achievements && achievements.map(achievement => {
                         return (<tr key={achievement.id}>
                             <td>{achievement.name}</td>

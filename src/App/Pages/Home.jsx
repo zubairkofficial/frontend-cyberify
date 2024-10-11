@@ -90,9 +90,9 @@ The Final output must be in JSON format
     }
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={"Dashboard"}>
-                {/* <Link to="/user/projects/create" class="btn btn-sm btn-flex btn-primary fw-bold">
+                {/* <Link to="/user/projects/create" className="btn btn-sm btn-flex btn-primary fw-bold">
                     Create Project
                 </Link> */}
             </Toolbar>

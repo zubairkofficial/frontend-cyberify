@@ -102,9 +102,9 @@ const CreateProject = () => {
     }, []);
 
     return (
-        <div class="d-flex flex-column flex-column-fluid">
+        <div className="d-flex flex-column flex-column-fluid">
             <Toolbar title={project_id ? `Update ${ project.name }` : "Create New Project"}>
-                <Link to="/user/projects" class="btn btn-sm btn-flex btn-primary fw-bold">
+                <Link to="/user/projects" className="btn btn-sm btn-flex btn-primary fw-bold">
                     All Projects
                 </Link>
             </Toolbar>
