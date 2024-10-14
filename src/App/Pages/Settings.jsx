@@ -17,6 +17,7 @@ import axios from "axios";
 import { OpenAIEmbeddings, ChatOpenAI } from "@langchain/openai";
 import { useApi } from "../Context/ApiContext";
 import { useRetriever } from "../Components/retriever";
+import { LLM } from "@langchain/core/language_models/llms";
 
 
 const Settings = () => {
@@ -26,11 +27,17 @@ const Settings = () => {
     const retriever = useRetriever();
     const { chat_slug } = useParams();
     const { openAiApiKey } = useApi();
+    const [isTitleEntered, setIsTitleEntered] = useState(false); // Track if project title is entered
+    const [isDescriptionEntered, setIsDescriptionEntered] = useState(false); // Track if description is entered
+    const [keywordNames, setKeywordNames] = useState([]);  // To store only the names
+    const [generatedKeywords, setGeneratedKeywords] = useState([]); // Store generated keywords
+    const [selectedKeywords, setSelectedKeywords] = useState([]);
     const [isWaitingForBotResponse, setIsWaitingForBotResponse] = useState(false); // Track bot response state
     const [showOptionsDropdown, setShowOptionsDropdown] = useState(false);
     const [description, setDescription] = useState(""); // To store project description
     const [productTitle, setProductTitle] = useState(""); // State for product title
-    const [keywords, setKeywords] = useState(""); // State for product title
+    const [keywords, setKeywords] = useState(""); // State for 
+    const [extraKeywords, setExtraKeywords] = useState(""); // State for 
     const [responseMessage, setResponseMessage] = useState(false);
     const [isDescriptionSubmitted, setIsDescriptionSubmitted] = useState(false); // Track description submission
     const [chatMessages, setChatMessages] = useState([]); // Array to store chat messages
@@ -45,10 +52,11 @@ const Settings = () => {
     const API_KEY = openAiApiKey ?? " ";
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredChats, setFilteredChats] = useState(chatHistory);
-    const [coverLetterTemplates, setCoverLetterTemplates] = useState([]); // Store the list of templates
-    const [selectedCoverLetter, setSelectedCoverLetter] = useState(null); // Store the selected cover letter
-    const [selectedTemplateId, setSelectedTemplateId] = useState(""); // Store the selected cover letter ID
+    const [coverLetterTemplates, setCoverLetterTemplates] = useState([]);
+    const [selectedCoverLetter, setSelectedCoverLetter] = useState(null);
+    const [selectedTemplateId, setSelectedTemplateId] = useState("");
     const [showCoverLetterContent, setShowCoverLetterContent] = useState(false);
+
 
     useEffect(() => {
         if (searchTerm === '') {
@@ -78,7 +86,7 @@ const Settings = () => {
     const fetchCoverLetterTemplates = async () => {
         try {
             const response = await axios.get(`${Helper.apiUrl}cover-letter/all`, Helper.authHeaders);
-            setCoverLetterTemplates(response.data); 
+            setCoverLetterTemplates(response.data);
             if (response.data.length > 0) {
                 setSelectedTemplateId(response.data[0].id);
                 setSelectedCoverLetter(response.data[0]); // Set first template as selected
@@ -102,8 +110,95 @@ const Settings = () => {
         temperature: 0.3,
     });
 
+    const getKeywords = async () => {
+        try {
+            const result = await axios.get(`${Helper.apiUrl}keyword/all`, Helper.authHeaders);
+            const namesArray = result.data.map(keyword => keyword.name);
+            setKeywordNames(namesArray);
+        } catch (error) {
+            console.error("Error fetching keywords:", error);
+        }
+    };
+
+    useEffect(() => {
+        getKeywords();
+    }, []);
+
+    const handleGenerateKeywords = async () => {
+        console.log(keywordNames)
+        if (productTitle.trim() && description.trim()) {
+            try {
+                setIsWaitingForBotResponse(true);
+                const openAiResponse = await model.invoke(`Generate a maximum of 6 short and highly targeted domain-specific keywords based solely on the project title and description. The keywords should focus on the overall domain of the project, avoiding specific product features or descriptions.
+
+Project Title: ${productTitle}
+Project Description: ${description}
+Context Keywords: ${keywordNames}
+
+Instructions:
+- Focus **only on domain-specific** keywords, reflecting the overall business area, industry, or service model (e.g., "Open AI," "SaaS Platform," "Generative AI").
+- Avoid using any specific product features, descriptions, or content from the title or description.
+- Include **at most 1 or 2 keywords** related to the relevant technologies or platforms that are crucial for the domain.
+- The keywords should be concise and specific to the domain, not general terms or broad categories (e.g., "AI solutions" is too broad, but "Generative AI" is acceptable if it's part of the core tech stack).
+- Limit the keywords to a maximum of 6, with at least 80% focused on domain-specific terms and at most 20% on the tech stack.
+- Return the keywords as an array: ["keyword1", "keyword2", "keyword3", ...]
+- The Keywords must only be generated from the context keywords given or strictly related to keywords found in content keywords.
+
+Note: Do not include any features or product requirements in the keywords. Focus on high-level domain-related terms and minimal relevant technologies.
+`);
+                console.log(openAiResponse)
+                const responseContent = openAiResponse.content;
+                const parsedKeywords = JSON.parse(responseContent);
+                setGeneratedKeywords(parsedKeywords);
+                setIsWaitingForBotResponse(false);
+            } catch (error) {
+                setIsWaitingForBotResponse(false);
+                console.error("Error generating keywords:", error);
+            }
+        }
+    };
+
+    const regenerateKeywords = async () => {
+        try {
+            setIsWaitingForBotResponse(true);
+            // Call the OpenAI model with the context, excluding already generated keywords
+            const openAiResponse = await model.invoke(`Generate a maximum of 6 short and highly targeted domain-specific keywords based solely on the project title and description. The keywords should focus on the overall domain of the project, avoiding specific product features or descriptions.
+    
+    Project Title: ${productTitle}
+    Project Description: ${description}
+    Previous Keywords: ${generatedKeywords.join(', ')}  // Exclude previously generated keywords
+    Context Keywords: ${keywordNames}  // Add context keywords here
+    
+    Instructions:
+    - Only generate **new keywords** that are not already included in the list of previous keywords.
+    - Include new keywords that reflect the domain of the project, relevant technologies, or industry-specific terms.
+    - Focus on generating fresh, domain-relevant keywords, and exclude previously used keywords.
+    - Return a maximum of 6 new keywords.
+    - There should be no numbering rather direct format like this ["keyword1", "keyword2", "keyword3", ...]
+    
+    New Keywords:
+    `);
+    console.log(openAiResponse)
+            const responseContent = openAiResponse.content;
+            const newKeywords = JSON.parse(responseContent);
+
+            // Update the state with only the newly generated keywords (no duplicates)
+            setGeneratedKeywords([...newKeywords]);  // Store only the new keywords
+
+            // Optionally update the `keywords` state for display
+            setKeywords(newKeywords.join(', '));  // Update the keywords state with the new ones
+            setIsWaitingForBotResponse(false);
+            setSelectedKeywords([])
+        } catch (error) {
+            setIsWaitingForBotResponse(false);
+            console.error("Error generating new keywords:", error);
+        }
+    };
+
+
+
     const getOpenAIResponse = async (selectedOption, description, messages, keywords, selectedCoverLetter) => {
-        
+
         try {
             // Define the standalone question template with interpolation
             const standAloneTemplate = `Given a description, convert the description to a standalone description. 
@@ -140,6 +235,7 @@ const Settings = () => {
             - Don't start with "Dear," "Mr," "Mrs," or "Ms." Rather say "Hello," "Hi," or "Hey" and the first name of the client.
             - Structure the response with distinct sections without excessive spacing.
             - Ensure each section is brief but informative, highlighting important points without overwhelming the client.
+            - Also Consider The keywords that are provided in User Response (If Any), if none or skipped, then continue with the flow.
             - Now that you're provided with the cover letter structure, you'll follow the structure of the provided cover letter to generate a response. You'll leave space for links of matching products (e.g., [Loom Link]) but you'll give names of products matched from context data and you'll fill in the description of the cover letter according to the matching content from context data.
             - Don't tell how excited you are for the project; keep it simple as if talking to a real person.
             - Use bullet points for clarity where applicable, but keep lists concise.
@@ -154,7 +250,7 @@ const Settings = () => {
             Context: ${description}
             Response:
             `;
-            
+
 
 
             console.log("Answer Template:", answerTemplate);
@@ -193,6 +289,7 @@ const Settings = () => {
                 description,
             };
             console.log("Final Prompt Data:", finalPromptData);
+            console.log("KeyWords:", keywords);
 
             const finalResponse = await answerPrompt.pipe(model).pipe(new StringOutputParser()).invoke(finalPromptData);
             console.log("Final Response:", finalResponse);
@@ -204,127 +301,6 @@ const Settings = () => {
         }
     };
 
-
-    // const getOpenAIResponse = async (selectedOption, description, messages,keywords) => {
-    //     try {
-    //         const standAloneTemplate = `Given a description, convert the description to a standalone description. 
-    //         Description: {description}
-    //         standalone description:`;
-
-    //         const standAlonePrompt = PromptTemplate.fromTemplate(standAloneTemplate);
-
-    //         const answerTemplate = `
-    //     You are a professional copywriter. Based on the context and responses, 
-    //     generate a concise response suitable for a ${selectedOption} (e.g., Cover Letter).
-    //     Incorporate the following keywords effectively: ${keywords}.
-    //     If any questions are skipped from the five questions (client name, product title, budget, date joining and job link), skip at the place where the answer was supposed to be. 
-    //     Maintain a professional tone suitable for a freelancing client. Distinguish whether the recipient is a company or an individual based on the context and responses and tailor your response accordingly.
-
-    //     **User Responses:**  
-    //     ${messages.map(msg =>
-    //         msg.is_bot === 1
-    //             ? `**Assistant:** ${msg.text}`
-    //             : `**User:** ${msg.text === "Skipped" ? " " : msg.text}`
-    //     ).join('\n')}
-
-    //     **Instructions:**  
-    //     - Don't start with Dear, Mr or Mrs. or Ms. Rather say Hello or Hi or Hey and first name of client.
-    //     - Structure the response with distinct sections without excessive spacing.
-    //     - Ensure each section is brief but informative, highlighting important points without overwhelming the client.
-    //     - Don't tell how excited etc you are for the project and keep it simple as if talking to a real person.
-    //     - Use bullet points for clarity where applicable, but keep lists concise.
-    //     - Avoid including personal contact information as per freelance platform policies.
-    //     - Do Not Again Mention in response the questions that were answered by client like budget and project started and job link etc.
-
-    //     **Response Format:**  
-    //     - Use **bold** for important points. 
-    //     - Use *italics* for emphasis. 
-    //     - Maintain paragraphs with line breaks (\\n) but limit the length of each section to keep the overall response concise.
-
-    //     Context: ${description}
-    //     Response:
-    //     `;
-    //     //     const answerTemplate = `
-    //     //   You are a professional copywriter. Based on the context and responses, 
-    //     // generate a concise response suitable for a ${selectedOption} (e.g., Cover Letter).
-    //     // If any questions are skipped from the five questions (client name, product title, budget, date joining and job link), skip at the place where the answer was supposed to be. 
-    //     // Maintain a professional tone suitable for a freelancing client. Distinguish whether the recipient is a company or an individual based on the context and responses and tailor your response accordingly.
-
-    //     // Use the following information formatted for clarity:
-
-    //     // **User Responses:**  
-    //     // ${messages.map(msg =>
-    //     //         msg.is_bot === 1
-    //     //             ? `**Assistant:** ${msg.text}`
-    //     //             : `**User:** ${msg.text === "Skipped" ? " " : msg.text}`
-    //     //     ).join('\\n')}
-
-    //     // **Instructions:**  
-    //     // - Don't start with Dear, Mr or Mrs. or Ms. Rather say Hello or Hi or Hey and first name of client.
-    //     // - Structure the response with distinct sections without excessive spacing.
-    //     // - Ensure each section is brief but informative, highlighting important points without overwhelming the client.
-    //     // - Don't tell how excited etc you are for the project and keep it simple as if talking to a real person.
-    //     // - Use bullet points for clarity where applicable, but keep lists concise.
-    //     // - Avoid including personal contact information as per freelance platform policies.
-    //     // - Do Not Again Mention in response the questions that were answered by client like budget and project started and job link etc.
-
-    //     // **Response Format:**  
-    //     // - Use **bold** for important points. 
-    //     // - Use *italics* for emphasis. 
-    //     // - Maintain paragraphs with line breaks (\\n) but limit the length of each section to keep the overall response concise.
-
-    //     // Provide a polished and engaging response that effectively addresses all aspects of the project without being lengthy.
-    //     // context:{description}
-    //     // response:
-    //     //   `;
-    //         const answerPrompt = PromptTemplate.fromTemplate(answerTemplate);
-
-    //         const standAloneQuestionChain = standAlonePrompt.pipe(model).pipe(new StringOutputParser());
-
-    //         const retrieverChain = RunnableSequence.from([
-    //             async (prevResult) => {
-    //                 return { standalone_question: prevResult.standalone_question };
-    //             },
-    //             async ({ standalone_question }) => {
-    //                 const retrievedDocs = await retriever.getRelevantDocuments(standalone_question);
-    //                 console.log(retrievedDocs)
-    //                 return retrievedDocs.map(doc => doc.pageContent);
-    //             },
-    //             async (retrievedTexts) => {
-    //                 const filteredTexts = retrievedTexts.filter(text => text !== null && text !== undefined);
-    //                 const combinedContext = combineDocs(filteredTexts);
-    //                 return { context: combinedContext };
-    //             }
-    //         ]);
-
-    //         const answerChain = answerPrompt.pipe(model).pipe(new StringOutputParser());
-
-    //         const standaloneQuestionResult = await standAloneQuestionChain.invoke({ description });
-    //         const contextResult = await retrieverChain.invoke({ standalone_question: standaloneQuestionResult });
-
-    //         if (!contextResult.context) {
-    //             throw new Error("Context is undefined");
-    //         }
-
-    //         const finalPromptData = {
-    //             context: `${contextResult.context}`,
-    //             description,
-    //         };
-
-    //         if (!finalPromptData.context || !finalPromptData.description) {
-    //             throw new Error("Missing value for input context or question");
-    //         }
-    //         console.log(finalPromptData)
-    //         const finalResponse = await answerChain.invoke(finalPromptData);
-    //         console.log("Final Response : ", finalResponse);
-    //         return finalResponse;
-    //     } catch (e) {
-    //         console.log(e);
-    //     };
-    // }
-
-
-
     const scrollToBottom = () => {
         if (chatMessagesContainerRef.current) {
             // Adding a small timeout to ensure content is fully rendered before scrolling
@@ -334,7 +310,7 @@ const Settings = () => {
                     top: chatMessagesContainerRef.current.scrollHeight,
                     behavior: 'smooth'
                 });
-    
+
                 // Scroll the window down by 10% of the viewport height (10vh)
                 window.scrollBy({
                     top: window.innerHeight * 0.2, // Change the multiplier as needed
@@ -343,7 +319,7 @@ const Settings = () => {
             }, 100); // Adjust delay as needed, 100ms usually works well
         }
     };
-    
+
 
 
     useEffect(() => {
@@ -369,6 +345,7 @@ const Settings = () => {
                 if (chatData) {
                     setChatId(chatData.chat.id)
                     setIsDescriptionSubmitted(true);
+                    setIsWaitingForBotResponse(false);
                     setChatMessages(chatData.messages || []); // Set messages if present
                     console.log(chatMessages);
                     setTimeout(() => {
@@ -393,17 +370,20 @@ const Settings = () => {
 
     const questions = [
         "What is the client's full name?",
-        "Please provide the title of the product.",
-        "Can you share the job link for this project?",
-        "What is the expected spending or budget for this project?",
-        "What is the date the client joined the project?",
-        "Would you like to give some keywords to consider while generating response?"
+        // "Please provide the title of the product.",
+        // "Can you share the job link for this project?",
+        // "What is the expected spending or budget for this project?",
+        // "What is the date the client joined the project?",
+        "Would you like to give some More keywords to consider while generating response?"
     ];
 
     const handleDescriptionSubmit = () => {
-        if (description.trim()) {
+        if (description.trim() && productTitle.trim()) {
             setIsDescriptionSubmitted(true); // Return to the chat interface
             setShowCoverLetterContent(false);
+            if (generatedKeywords.length > 0) {
+                setKeywords(selectedKeywords.join(", ")); // Join the selected keywords into a string
+            }
             // Do not reset the chat messages, continue from where the user left off
             if (chatMessages.length === 0) {
                 setChatMessages([{ type: 'bot', text: questions[currentQuestionIndex] }]);
@@ -414,7 +394,18 @@ const Settings = () => {
         }
     };
 
- const handleToggleCoverLetter = () => {
+    const toggleKeywordSelection = (keyword) => {
+        if (selectedKeywords.includes(keyword)) {
+            // Remove the keyword
+            setSelectedKeywords(prev => prev.filter(kw => kw !== keyword));
+        } else {
+            // Add the keyword
+            setSelectedKeywords(prev => [...prev, keyword]);
+        }
+        console.log(selectedKeywords)
+    };
+
+    const handleToggleCoverLetter = () => {
         const selectedTemplate = coverLetterTemplates.find(template => template.id === selectedTemplateId);
         setSelectedCoverLetter(selectedTemplate); // Assign the selected cover letter
         setShowCoverLetterContent((prev) => !prev); // Toggle visibility
@@ -458,7 +449,7 @@ const Settings = () => {
             await storeMessage({ text: question }, chatId, false); // `false` indicates it's a user message
 
             // Get the first 10 messages and the last 10 messages
-            const first10Messages = updatedMessages.slice(0, 12);
+            const first10Messages = updatedMessages.slice(0, 4);
             const last10Messages = updatedMessages.slice(-10);
 
             // Prepare the chat history for the context
@@ -596,7 +587,7 @@ const Settings = () => {
             const updatedMessages = [...chatMessages];
 
             // Get the first 10 messages and the last 10 messages
-            const first10Messages = updatedMessages.slice(0, 12);
+            const first10Messages = updatedMessages.slice(0, 4);
             const last10Messages = updatedMessages.slice(-10);
 
             // Prepare the chat history for the context
@@ -725,8 +716,9 @@ const Settings = () => {
             setProductTitle(answer || ""); // Save the answer as product title
         }
 
-        if (questions[currentQuestionIndex] === "Would you like to give some keywords to consider while generating response?") {
-            setKeywords(answer || ""); // Store the keywords
+        if (questions[currentQuestionIndex] === "Would you like to give some More keywords to consider while generating response?") {
+
+            setExtraKeywords(answer);
         }
 
 
@@ -754,8 +746,8 @@ const Settings = () => {
 
                 // Save chat data including questions and answers in the correct sequence
                 saveChatData(updatedMessages); // Call the function to save data
-                setIsWaitingForBotResponse(false); // Re-enable buttons after processing
-            }, 800); // Simulate delay for generating response
+                // setIsWaitingForBotResponse(false); // Re-enable buttons after processing
+            }, 1600); // Simulate delay for generating response
         }
     };
 
@@ -803,7 +795,7 @@ const Settings = () => {
             // Save all messages in one go
             const messagesResponse = await axios.post(`${Helper.apiUrl}proposal_chats/messages/store`, { messages: messagesData }, Helper.authHeaders);
             console.log("All messages saved:", messagesResponse);
-            navigate(`/user/settings/${chatResponse.data.chat.slug}`,{
+            navigate(`/user/settings/${chatResponse.data.chat.slug}`, {
                 state: { resultResponse: true },
             });
             fetchChatHistory();
@@ -831,12 +823,22 @@ const Settings = () => {
     useEffect(() => {
         fetchChatHistory();
     }, []);
+    useEffect(() => {
+        console.log(extraKeywords);
+    }, [extraKeywords]);
+
     const setNewChat = () => {
+        setIsTitleEntered(false)
+        setIsDescriptionEntered(false)
         setDescription(""); // Clear description
         setProductTitle(""); // Clear product title
         setIsDescriptionSubmitted(false); // Reset description submission state
         setChatMessages([]); // Clear chat messages
         setCurrentQuestionIndex(0); // Reset question index
+        setSelectedKeywords([])
+        setGeneratedKeywords([])
+        setKeywords("")
+        setExtraKeywords("")
         setCurrentAnswer(""); // Clear current answer
         setIsIntroVisible(true); // Show intro message
         navigate('/user/settings')
@@ -908,9 +910,23 @@ const Settings = () => {
                             {/* If the description is not yet submitted, show the description box */}
                             {!isDescriptionSubmitted ? (
                                 <div>
-                                    <div className="d-flex justify-between my-2 align-items-center">
+                                    <div>
+                                        <h4 className="mt-2">Project Title</h4>
+                                        <input
+                                            type="text"
+                                            className="form-control mb-3"
+                                            placeholder="Enter the project title"
+                                            value={productTitle}
+                                            onChange={(e) => {
+                                                setProductTitle(e.target.value);
+                                                setIsTitleEntered(e.target.value.trim() !== ""); // Enable description field if title is entered
+                                            }}
+                                        />
+                                    </div>
+
+                                    <div>
                                         <h4 className="mt-2">Project Description</h4>
-                                        <div className="dropdown-options">
+                                        {/* <div className="dropdown-options">
                                             <button
                                                 className="btn btn-secondary"
                                                 onClick={() => setShowOptionsDropdown(!showOptionsDropdown)}
@@ -926,7 +942,54 @@ const Settings = () => {
                                                     <li onClick={() => handleOptionSelect("System")}>System</li>
                                                 </ul>
                                             )}
+                                        </div> */}
+                                        <textarea
+                                            className="form-control mb-3"
+                                            placeholder="Describe your client's project requirements..."
+                                            rows="10"
+                                            value={description}
+                                            disabled={!isTitleEntered} // Description enabled only after title is entered
+                                            onChange={(e) => {
+                                                setDescription(e.target.value);
+                                                setIsDescriptionEntered(e.target.value.trim() !== ""); // Enable 'Generate Keywords' button when description is entered
+                                            }}
+                                        />
+                                    </div>
+
+                                    {/* Show the 'Generate Keywords' button after the description is entered */}
+                                    {isDescriptionEntered && (
+                                        <button
+                                            className="btn btn-primary btn-sm flex-end mb-3"
+                                            onClick={generatedKeywords.length > 0 ? regenerateKeywords : handleGenerateKeywords}  // Call regenerate if there are existing keywords
+                                            disabled ={isWaitingForBotResponse}
+                                        >
+                                            {generatedKeywords.length > 0 ? 'Regenerate Keywords' : 'Generate Keywords'}
+                                        </button>
+                                    )}
+
+                                    {generatedKeywords.length > 0 && (
+                                        <div className="mt-4">
+                                            <h4>Generated Keywords</h4>
+                                            <div className="d-flex flex-wrap gap-2">
+                                                {generatedKeywords.map((keyword, index) => {
+                                                    const isSelected = selectedKeywords.includes(keyword);
+                                                    return (
+                                                        <button
+                                                            key={index}
+                                                            className={`keyword-chip ${isSelected ? 'selected' : ''}`}
+                                                            onClick={() => toggleKeywordSelection(keyword)}
+                                                        >
+                                                            {isSelected ? '-' : '+'} {keyword}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
+                                    )}
+
+                                    {/* <div className="d-flex justify-between my-2 align-items-center">
+                                        <h4 className="mt-2">Project Description</h4>
+                                        
                                     </div>
                                     <textarea
                                         className="form-control mb-3"
@@ -934,43 +997,43 @@ const Settings = () => {
                                         rows="10"
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                    />
+                                    /> */}
                                     {selectedTemplateId && (
-                                    <div className="my-4">
-                                        <label htmlFor="coverLetterDropdown" className="form-label">Select a Cover Letter Template:</label>
+                                        <div className="my-4">
+                                            <label htmlFor="coverLetterDropdown" className="form-label">Select a Cover Letter Template:</label>
 
-                                        <div className="dropdown-button-container">
-                                            <select
-                                                id="coverLetterDropdown"
-                                                className="form-select mb-3"
-                                                value={selectedTemplateId}
-                                                onChange={(e) => setSelectedTemplateId(e.target.value)}
-                                            >
-                                                {coverLetterTemplates.map((template) => (
-                                                    <option key={template.id} value={template.id}>
-                                                        {template.name}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <div className="dropdown-button-container">
+                                                <select
+                                                    id="coverLetterDropdown"
+                                                    className="form-select mb-3"
+                                                    value={selectedTemplateId}
+                                                    onChange={(e) => setSelectedTemplateId(e.target.value)}
+                                                >
+                                                    {coverLetterTemplates.map((template) => (
+                                                        <option key={template.id} value={template.id}>
+                                                            {template.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
 
-<button
-                                className="btn btn-primary"
-                                onClick={handleToggleCoverLetter}
-                            >
-                                {showCoverLetterContent ? "Hide" : "View"}
-                            </button>
+                                                <button
+                                                    className="btn btn-primary"
+                                                    onClick={handleToggleCoverLetter}
+                                                >
+                                                    {showCoverLetterContent ? "Hide" : "View"}
+                                                </button>
+                                            </div>
+                                            {showCoverLetterContent && selectedCoverLetter && (
+                                                <div className="selected-cover-letter mt-3">
+                                                    <h5>Cover Letter: {selectedCoverLetter.name}</h5>
+                                                    <p>{selectedCoverLetter.content}</p>
+                                                </div>
+                                            )}
                                         </div>
-                                        {showCoverLetterContent && selectedCoverLetter && (
-                        <div className="selected-cover-letter mt-3">
-                            <h5>Cover Letter: {selectedCoverLetter.name}</h5>
-                            <p>{selectedCoverLetter.content}</p>
-                        </div>
-                    )}
-                                    </div>
                                     )}
-                                    
 
-                                    <button className="btn btn-primary btn-sm" onClick={handleDescriptionSubmit}>
+
+                                    <button disabled={isWaitingForBotResponse} className="btn btn-primary btn-sm" onClick={handleDescriptionSubmit}>
                                         Submit Description
                                     </button>
 
@@ -1284,6 +1347,25 @@ const Settings = () => {
                     width: 150px;
                     z-index: 1;
                 }
+
+
+                 .keyword-chip {
+        padding: 5px 10px;
+        background-color: #f0f0f0;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .keyword-chip.selected {
+        background-color: #F57C00;
+        color: white;
+    }
+
+    .keyword-chip:hover {
+        border: 1px solid #F57C00;
+    }
 
                 .options-dropdown-menu li {
                     padding: 8px 10px;

@@ -32,6 +32,7 @@ import KnowledgeBase from './App/Pages/KnowledgeBase'
 import ApiKeys from './App/Pages/ApiKeys'
 import ErrorPage from './App/Pages/ErrorPage'
 import CoverLetterTemplates from './App/Pages/CoverLetterTemplates'
+import Keywords from './App/Pages/Keyword'
 
 const Auth = ({ children, isAuth = true }) => {
   let user = Helper.getItem('user', true);
@@ -90,6 +91,7 @@ function App() {
           <Route path="/user/knowledgebase" element={<Auth><KnowledgeBase /></Auth>} />
           <Route path="/user/apikeys" element={<Auth><ApiKeys /></Auth>} />
           <Route path="/user/cover-letters" element={<Auth><CoverLetterTemplates /></Auth>} />
+          <Route path="/user/keywords" element={<Auth><Keywords /></Auth>} />
           <Route path="/user/create-blog" element={<Auth><Blog /></Auth>} />
           <Route path="/user/blog/edit/:id/:slug" element={<Auth><Blog /></Auth>} />
           <Route path="/user/blog/view/:id/:slug" element={<Auth><ViewBlog /></Auth>} />
