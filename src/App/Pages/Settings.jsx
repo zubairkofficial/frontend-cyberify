@@ -178,7 +178,7 @@ Note: Do not include any features or product requirements in the keywords. Focus
     
     New Keywords:
     `);
-    console.log(openAiResponse)
+            console.log(openAiResponse)
             const responseContent = openAiResponse.content;
             const newKeywords = JSON.parse(responseContent);
 
@@ -233,14 +233,20 @@ Note: Do not include any features or product requirements in the keywords. Focus
             
             **Instructions:**  
             - Don't start with "Dear," "Mr," "Mrs," or "Ms." Rather say "Hello," "Hi," or "Hey" and the first name of the client.
+            - You may (only if feasible) generate a unique starter line instead of using the same starter line from reference cover letter. And not only for the starter, If at any point you think there can be a suitable (again only if feasible and better) content for approach or questions or any point of response. Just give a humanoid better resposne instead of default reference template. But if reference template is fine, don't mess the content up.
             - Structure the response with distinct sections without excessive spacing.
             - Ensure each section is brief but informative, highlighting important points without overwhelming the client.
+            - The solution or approach that you'll provide in response must be ideally taken from the solution found in the context of vectors.
             - Also Consider The keywords that are provided in User Response (If Any), if none or skipped, then continue with the flow.
             - Now that you're provided with the cover letter structure, you'll follow the structure of the provided cover letter to generate a response. You'll leave space for links of matching products (e.g., [Loom Link]) but you'll give names of products matched from context data and you'll fill in the description of the cover letter according to the matching content from context data.
             - Don't tell how excited you are for the project; keep it simple as if talking to a real person.
             - Use bullet points for clarity where applicable, but keep lists concise.
             - Avoid including personal contact information as per freelance platform policies.
             - Do not repeat the questions that were answered by the client, such as budget, project started, or job link.
+            - Ensure the tone feels friendly, approachable, and natural, avoiding overly formal language.
+- Use conversational phrases like 'let's dive into,' 'what’s great about,' 'here’s what we’ve got,' or 'I’ve got you covered' to make the response feel human.
+- Feel free to use casual contractions such as 'you'll,' 'I'm,' 'we've,' etc., to make the response more relatable and less robotic.
+- Where appropriate, insert a bit of empathy, like 'I understand that this can be challenging,' or 'I see what you're aiming for,' to make the conversation feel personal.
             
             **Response Format:**  
             - Use **bold** for important points. 
@@ -455,8 +461,11 @@ Note: Do not include any features or product requirements in the keywords. Focus
             // Prepare the chat history for the context
             const promptMessages = [...first10Messages, ...last10Messages];
 
+            const chosenKeywords = keywords;
+
             // Create conversational prompt
-            const conversationPrompt = `
+            const conversationPrompt = 
+        `
             You are an AI assistant helping a user with their ongoing project discussions. 
             Use the following conversation history to generate a concise, ready-to-send response for the user's latest question or input. The response should be suitable for a client and should not include any extraneous details like introduction phrases, such as "here's your adjusted response," or follow-up offers like "feel free to ask anything else."
         
@@ -469,59 +478,53 @@ Note: Do not include any features or product requirements in the keywords. Focus
             
             **Latest User Question:**  
             ${question}
+
+            **Context Keywords:**  
+            ${chosenKeywords}
             
             **Instructions:**  
-            - Answer in a clear, concise, and professional manner.
-            - Do not add meta comments such as "here's your adjusted response" or "feel free to ask anything else."
-            - Refer back to previous points in the conversation when relevant.
-            - Keep the response within context and ensure it fits into the ongoing conversation.
-            - If any previous messages contain skipped or missing information, acknowledge that briefly and continue.
-            - Do not repeat entire previous responses unless necessary, focus on new information.
-            - Keep the response natural and conversational, as if you are directly talking to the client.
-            - Use bullet points for clarity where applicable, but keep lists concise.
-            - Avoid including personal contact information as per freelance platform policies.
-            - Do not mention the questions that were already answered like budget, project start date, job link, etc.
-        
-            **Response Format:**  
-            - Use **bold** for important points. 
-            - Use *italics* for emphasis. 
-            - Maintain paragraphs with line breaks (\\n) but limit the length of each section to keep the overall response concise.
-            
-            The response should be ready to send to the client, without additional instructions or unnecessary commentary.
+- Respond in a personalized manner by referencing specific points from the conversation - Use clear, concise, and professional language, avoiding meta comments and unnecessary phrases - Use empathetic language to acknowledge the client's feelings and needs - Maintain a conversational flow with natural transitions between ideas - Keep the tone friendly and relatable, avoiding overly formal language and jargon unless necessary - Vary sentence structure for a more engaging rhythm in the response - Focus on providing new information and insights, referring back to previous points in the conversation - Suggest next steps or resources when relevant to help the client progress. Ensure the response is suitable for direct communication with a client, feeling comfortable and supportive throughout the project discussions.
         `;
+        //     const conversationPrompt = 
+        // `
+        //     You are an AI assistant helping a user with their ongoing project discussions. 
+        //     Use the following conversation history to generate a concise, ready-to-send response for the user's latest question or input. The response should be suitable for a client and should not include any extraneous details like introduction phrases, such as "here's your adjusted response," or follow-up offers like "feel free to ask anything else."
+        
+        //     **Conversation History:**  
+        //     ${promptMessages.map(msg =>
+        //         msg.type === 'bot'
+        //             ? `Assistant: ${msg.text}`
+        //             : `User: ${msg.text === "Skipped" ? " " : msg.text}`
+        //     ).join('\n')}
+            
+        //     **Latest User Question:**  
+        //     ${question}
+            
+        //     **Instructions:**  
+        //     - Answer in a clear, concise, and professional manner.
+        //     - Do not add meta comments such as "here's your adjusted response" or "feel free to ask anything else."
+        //     - Refer back to previous points in the conversation when relevant.
+        //     - Keep the response within context and ensure it fits into the ongoing conversation.
+        //     - If any previous messages contain skipped or missing information, acknowledge that briefly and continue.
+        //     - Do not repeat entire previous responses unless necessary, focus on new information.
+        //     - Ensure the response is suitable for direct communication with a client. The tone should be professional and conversational, not like an ongoing chatbot interaction.
+        //     - Frame the message as though the assistant is speaking on behalf of the user, not as an AI bot. Assume the message is being crafted by a human professional.
+        //     - Avoid using phrases that sound like the response is part of an AI conversation (e.g., "Here's your response," "Let me know if you need anything else.").
+        //     - Ensure the tone feels friendly, approachable, and natural, avoiding overly formal language.
+        //     - Use conversational phrases like 'let's dive into,' 'what’s great about,' 'here’s what we’ve got,' or 'I’ve got you covered' to make the response feel human.
+        //     - Feel free to use casual contractions such as 'you'll,' 'I'm,' 'we've,' etc., to make the response more relatable and less robotic.
+        //     - Where appropriate, insert a bit of empathy, like 'I understand that this can be challenging,' or 'I see what you're aiming for,' to make the conversation feel personal.
+        //     - Keep the response polite and direct, suitable for a formal email or message.
+        //     - Focus on clarity, without excessive repetition or rephrasing, to ensure the response is concise and to the point.
+        //     - Avoid overly technical jargon unless necessary, and tailor the response to the client’s level of expertise.
+        //     - Use bullet points for clarity where applicable, but keep lists concise.
+        //     - Avoid including personal contact information as per freelance platform policies.
+        //     - Do not mention the questions that were already answered like budget, project start date, job link, etc.
+        //     - Use **bold** for important points. 
+        //     - Use *italics* for emphasis. 
+        //     - Maintain paragraphs with line breaks (\\n), but limit the length of each section to keep the overall response concise.
+        // `;
 
-
-
-            // const conversationPrompt = `
-            //     You are an AI assistant helping a user with their ongoing project discussions. 
-            //     Use the following conversation history to generate a helpful and relevant response to the user's latest question or input.
-
-            //     **Conversation History:**  
-            //     ${promptMessages.map(msg =>
-            //     msg.type === 'bot'
-            //         ? `Assistant: ${msg.text}`
-            //         : `User: ${msg.text === "Skipped" ? " " : msg.text}`
-            // ).join('\n')}
-
-            //     **Latest User Question:**  
-            //     ${question}
-
-            //     **Instructions:**  
-            //     - Answer in a clear, concise, and conversational manner.
-            //     - Refer back to previous points in the conversation when relevant.
-            //     - Keep the response within context and ensure it fits into the ongoing conversation.
-            //     - If any previous messages contain skipped or missing information, acknowledge that briefly and continue.
-            //     - Do not repeat entire previous responses unless necessary, focus on new information.
-            //     - Ensure the response is seamlessly integrated into the ongoing conversation, without adding phrases like 'Here’s your adjusted requirement e.g your expanded response etc.' or 'Let me know if you need anything else.' The response should feel like a natural continuation of the dialogue.
-            //     - Keep in mind the keywords provided at start of conversation.
-
-            //                 **Response Format:**  
-            // - Use **bold** for important points. 
-            // - Use *italics* for emphasis. 
-            // - Maintain paragraphs with line breaks (\\n) but limit the length of each section to keep the overall response concise.
-
-            //     Respond in a way that continues the conversation smoothly.
-            //     `;
 
             const conversationPromptTemplate = PromptTemplate.fromTemplate(conversationPrompt);
 
@@ -634,12 +637,17 @@ Note: Do not include any features or product requirements in the keywords. Focus
         
             **Instructions:**  
             - Refer to vectorized data to find pricing information for similar project implementations if available.
-            - In the absence of specific historical data, provide an estimated cost using common industry practices for technology projects.
+            - In the absence of specific historical data, leave the cost portion empty such like $00.00.
             - Clearly outline the expected costs involved, including development, implementation, and any additional features or services.
+            - Break down the development of application in clear stages so specific pricing can be added later on
             - Mention any potential for discounts or flexible payment options that could be negotiated in a client-freelancer setup.
             - Ensure all pricing information is specific, actionable, and suitable for being forwarded to potential clients.
             - Maintain a clear and professional tone, avoiding vague language and hypothetical scenarios.
             - Focus on providing data-driven insights and cost estimation methodologies relevant to the technology sector.
+                        - Ensure the tone feels friendly, approachable, and natural, avoiding overly formal language.
+- Use conversational phrases like 'let's dive into,' 'what’s great about,' 'here’s what we’ve got,' or 'I’ve got you covered' to make the response feel human.
+- Feel free to use casual contractions such as 'you'll,' 'I'm,' 'we've,' etc., to make the response more relatable and less robotic.
+- Where appropriate, insert a bit of empathy, like 'I understand that this can be challenging,' or 'I see what you're aiming for,' to make the conversation feel personal.
             
         
             Generate a precise and professional response focused on the cost estimation of developing a technology solution, suitable for direct client communication.
@@ -961,7 +969,7 @@ Note: Do not include any features or product requirements in the keywords. Focus
                                         <button
                                             className="btn btn-primary btn-sm flex-end mb-3"
                                             onClick={generatedKeywords.length > 0 ? regenerateKeywords : handleGenerateKeywords}  // Call regenerate if there are existing keywords
-                                            disabled ={isWaitingForBotResponse}
+                                            disabled={isWaitingForBotResponse}
                                         >
                                             {generatedKeywords.length > 0 ? 'Regenerate Keywords' : 'Generate Keywords'}
                                         </button>
