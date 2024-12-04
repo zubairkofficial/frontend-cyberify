@@ -68,6 +68,7 @@ const AppSidebar = () => {
                         <Allowed roles={["admin"]}><SidebarItem name={"Use Cases"} icon={"fa-light fa-briefcase"} link="/user/use-cases" /></Allowed>
                         <Allowed roles={["admin"]}><SidebarItem name={"Blog Categories"} icon={"fa-light fa-layer-group"} link="/user/blog-categories" /></Allowed>
                         <Allowed roles={["admin"]}><SidebarItem name={"Blogs"} icon={"fa-light fa-file-lines"} link="/user/blogs" /></Allowed>
+                        <Allowed roles={["admin"]}><SidebarItem name={"Industries"} icon={"fa-light fa-file-lines"} link="/user/industries" /></Allowed>
                         <Allowed roles={["admin"]}><SidebarItem name={"Knowledge Base"} icon={"fa-light fa-lightbulb"} link="/user/knowledgebase" /></Allowed>
                         <Allowed roles={["admin"]}><SidebarItem name={"Cover Letters"} icon={"fa-light fa-envelope"} link="/user/cover-letters" /></Allowed>
                         <Allowed roles={["admin"]}><SidebarItem name={"Keywords"} icon={"fa-light fa-search"} link="/user/keywords" /></Allowed>
