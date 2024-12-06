@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Toolbar from "../Components/Toolbar";
 import MainContent from "../Components/MainContent";
 import { useEffect, useState } from "react";
-import { get } from "../Config/customs";
+import axios from "axios";
 import FullRow from "../Components/FullRow";
 import Card from "../Components/Card";
 import NothingFound from "../Components/NothingFound";
@@ -14,17 +14,32 @@ import DropdownLink from "../Components/DrowdownLink";
 const Industries = () => {
     const [industries, setIndustries] = useState([]);
 
-    const getIndustries = async () => setIndustries(await get('industry/all'));
+    // Fetch industries using axios
+    const getIndustries = async () => {
+        try {
+            const response = await axios.get(`${Helper.apiUrl}industry/all`, Helper.authHeaders);
+            setIndustries(response.data.industries); // Set the industries data in state
+            console.log(response.data)
+        } catch (error) {
+            console.error("Error fetching industries:", error);
+        }
+    };
 
     const deleteIndustry = (id) => {
-        axios.get(`${Helper.apiUrl}industry/delete/${id}`, Helper.authHeaders).then(response => {
-            getIndustries();
-        });
-    }
+        axios.get(`${Helper.apiUrl}industry/delete/${id}`, Helper.authHeaders)
+            .then(response => {
+                // Refresh the industries list after deletion
+                getIndustries();
+            })
+            .catch(error => {
+                console.error("Error deleting industry:", error);
+            });
+    };
 
     useEffect(() => {
+        // Fetch industries when the component mounts
         getIndustries();
-    }, []);
+    }, []); // Empty dependency array to fetch once when the component loads
 
     return (
         <div className="d-flex flex-column flex-column-fluid">
@@ -48,25 +63,23 @@ const Industries = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {industries.map(industry => {
-                                        return (
-                                            <tr key={industry.id}>
-                                                <td>
-                                                    <img className="service-icon" src={ Helper.serverImage(industry.image) } alt="industry" />
-                                                </td>
-                                                <td>{ industry.title }</td>
-                                                <td>{ industry.slug }</td>
-                                                <td><Moment format="MMMM Do YYYY">{industry.created_at}</Moment></td>
-                                                <td className="text-end">
-                                                    <Dropdown>
-                                                        <DropdownLink link={`/user/industry/view/${industry.id}/${industry.slug}`} text={'View Industry'} />
-                                                        <DropdownLink link={`/user/industry/edit/${industry.id}/${industry.slug}`} text={'Edit Industry'} />
-                                                        <DropdownLink isbutton={true} onClick={() => deleteIndustry(industry.id)} text={'Delete Industry'} isdanger={true} />
-                                                    </Dropdown>
-                                                </td>
-                                            </tr>
-                                        )
-                                    })}
+                                    {industries.map(industry => (
+                                        <tr key={industry.id}>
+                                            <td>
+                                                <img className="service-icon" src={Helper.serverImage(industry.featured_image)} alt="industry" />
+                                            </td>
+                                            <td>{industry.industry_name}</td>
+                                            <td>{industry.industry_slug}</td>
+                                            <td><Moment format="MMMM Do YYYY">{industry.created_at}</Moment></td>
+                                            <td className="text-end">
+                                                <Dropdown>
+                                                    <DropdownLink link={`/user/industry/view/${industry.id}`} text={'View Industry'} />
+                                                    <DropdownLink link={`/user/industry/edit/${industry.id}`} text={'Edit Industry'} />
+                                                    <DropdownLink isbutton={true} onClick={() => deleteIndustry(industry.id)} text={'Delete Industry'} isdanger={true} />
+                                                </Dropdown>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
                         ) : (

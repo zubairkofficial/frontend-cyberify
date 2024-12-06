@@ -29,7 +29,6 @@ const Industry = () => {
       },
     slug: "",
     image: null,
-    image_name: "",
     sections: [],
   };
 
@@ -42,90 +41,144 @@ const Industry = () => {
 
   const navigate = useNavigate();
 
-  const saveIndustry = () => {
-    
-    const jsonData = {
-        heroSection:{
-            image:industry.image,
-            heading:industry.heading,
-            description: industry.description
-        },
-        contentIntro:{
-            id:slugify(industry.contentIntro.heading),
-            heading:industry.contentIntro.heading,
-            content:industry.contentIntro.content,
-        },
-        contentSections: contentSections.map((section) => ({
-            id:slugify(section.heading),
-            heading: section.heading, // Get heading of the section
-            sectionsData: section.sectionsData, // Get sectionsData of the section
-            subsections: section.subsections.map((subsection) => ({
-                id:slugify(subsection.subheading),
-                subheading: subsection.subheading,  // Get subheading of the subsection
-                content: subsection.content,        // Get content of the subsection
-            })),
-        })),
-    }
-      console.log(jsonData);
-    // const industryWithSlugs = {
-    //     ...industry,
-    //     content_intro_heading_slug: slugify(industry.content_intro_heading), // Slug for intro heading
-    //     sections: sections.map((section, sectionIndex) => {
-    //       const sectionSlug = slugify(section.heading); // Slug for section heading
-    //       return {
-    //         ...section,
-    //         id: sectionSlug, // Add slug as id for the section
-    //         heading_slug: sectionSlug, // Slug for section heading
-    //         subsections: section.subsections.map((subsection) => {
-    //           const subsectionSlug = slugify(subsection.heading); // Slug for subsection heading
-    //           return {
-    //             ...subsection,
-    //             id: subsectionSlug, // Add slug as id for subsection
-    //             heading_slug: subsectionSlug, // Slug for subsection heading
-    //           };
-    //         }),
-    //       };
-    //     }),
-    //   };
-    
-    //   console.log(industryWithSlugs);      
-    // setLoading(true);
-    // axios
-    //   .post(
-    //     `${Helper.apiUrl}industry/save`,
-    //     axios.toFormData(industry),
-    //     Helper.authFileHeaders
-    //   )
-    //   .then((response) => {
-    //     Helper.toast("success", response.data.message);
-    //     setCurrentStep(2);
-    //     if (currentStep === 2) {
-    //       navigate("/user/industries");
-    //     } else {
-    //       setIndustry(response.data.industry);
-    //       setSections(response.data.sections);
-    //       setErrors({});
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     Helper.toast("error", error.response.data.message);
-    //     setErrors(error.response.data.errors || {});
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
-  };
+  // const getIndustry = () => {
+  //   if (id) {
+  //     axios
+  //       .get(`${Helper.apiUrl}industry/single/${id}`, Helper.authHeaders)
+  //       .then((response) => {
+  //         setIndustry(response.data);
+  //         setContentSections(response.data.sections);
+  //       });
+  //   }
+  // };
 
-//   const getIndustry = () => {
-//     if (id) {
-//       axios
-//         .get(`${Helper.apiUrl}industry/single/${id}`, Helper.authHeaders)
-//         .then((response) => {
-//           setIndustry(response.data);
-//           setSections(response.data.sections);
-//         });
-//     }
-//   };
+  const getIndustry = () => {
+    if (id) {
+      axios
+        .get(`${Helper.apiUrl}industry/single/${id}`, Helper.authHeaders)
+        .then((response) => {
+          const industryData = response.data.industry.industry_data ? JSON.parse(response.data.industry.industry_data) : {};
+          console.log(industryData)
+          // Destructure industry data and set the states
+          setIndustry({
+            ...response.data.industry,
+            heading: response.data.industry.title,
+            description: industryData.heroSection?.description || '',
+            contentIntro: {
+              heading: industryData.contentIntro?.heading || '',
+              content: industryData.contentIntro?.content || ''
+            },
+            image: response.data.industry.featured_image,
+          });
+          
+          // Set content sections (if any)
+          setContentSections(
+            industryData.contentSections?.map((section) => ({
+              id: section.id,
+              heading: section.heading,
+              sectionsData: section.sectionsData,
+              subsections: section.subsections || []
+            })) || []
+          );
+        })
+        .catch((error) => {
+          console.error("Error fetching industry:", error);
+        });
+    }
+  };
+  
+
+const saveIndustry = () => {
+  // Prepare the industry data
+  const data = {
+    industry_name: industry.title,  // industry_name is the same as industry.title
+    industry_slug: slugify(industry.title),  // industry_name is the same as industry.title
+    title: industry.heading,  // Title is set as industry.heading
+    featured_image: industry.image,  // Featured image to send as file
+    industry_data: {
+      heroSection: {
+        heading: industry.heading,
+        description: industry.description,
+      },
+      tableIntroHeading:{
+        id: slugify(industry.contentIntro.heading),
+        heading: industry.contentIntro.heading,
+        subheadings:[]
+      },
+      tableOfContents:
+        contentSections.map((section) => ({
+          id: slugify(section.heading),
+          heading: section.heading,
+          listItems: section.subsections.map((subsection) => ({
+            id: slugify(subsection.subheading),
+            text: subsection.subheading,
+          })),
+        })),
+      contentIntro: {
+        id: slugify(industry.contentIntro.heading),
+        heading: industry.contentIntro.heading,
+        content: industry.contentIntro.content,
+      },
+      contentSections: contentSections.map((section) => ({
+        id: slugify(section.heading),
+        heading: section.heading,
+        sectionsData: section.sectionsData,
+        subsections: section.subsections.map((subsection) => ({
+          id: slugify(subsection.subheading),
+          subheading: subsection.subheading,
+          content: subsection.content,
+        })),
+      })),
+    },
+  };
+  console.log(data)
+  // return
+  // Prepare form data to include the image file and JSON data
+  const formData = new FormData();
+
+  formData.append('industry_name', data.industry_name);
+  formData.append('industry_slug', data.industry_slug);
+  formData.append('title', data.title);
+  formData.append('industry_data', JSON.stringify(data.industry_data));
+  // If there's an image file, append it
+  if (industry.image instanceof File) {
+    formData.append('featured_image', industry.image);
+  } else if (industry.image) {
+    // If it's a URL (existing image), append a marker to let the API know to keep it
+    formData.append('featured_image', null);  // Or any other appropriate logic
+  } 
+  if (id) {
+    formData.append('id', id);
+  }
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+  // return
+  // Make the API request to save the industry
+  setLoading(true);
+  axios
+    .post(
+      `${Helper.apiUrl}industry/save`,  // Your API endpoint for saving industry
+      formData,  // Send the form data with image and JSON
+      Helper.authFileHeaders  // Your authorization headers for the request
+    )
+    .then((response) => {
+      Helper.toast("success", response.data.message);
+      setCurrentStep(2);
+      setIndustry(response.data.industry);
+      setContentSections(response.data.sections);
+      setErrors({});
+      setCurrentStep(2);
+    })
+    .catch((error) => {
+      Helper.toast("error", error.response.data.message);
+      setErrors(error.response.data.errors || {});
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
+
 
   const addSection = () => {
     setContentSections([
@@ -157,6 +210,12 @@ const Industry = () => {
   };
 
   useEffect(() => {
+    if (currentStep === 2) {
+      navigate('/user/industries');
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
     if (id) {
       getIndustry();
     }
@@ -185,7 +244,7 @@ const Industry = () => {
             <TextInput
               label="Industry Title"
               required={true}
-              value={industry.title}
+              value={industry.title || ""}
               onChange={(e) =>
                 setIndustry({ ...industry, title: e.target.value })
               }
@@ -194,7 +253,7 @@ const Industry = () => {
             <TextInput
               label="Industry Heading"
               required={true}
-              value={industry.heading}
+              value={industry.heading || ""}
               onChange={(e) =>
                 setIndustry({ ...industry, heading: e.target.value })
               }
@@ -204,7 +263,7 @@ const Industry = () => {
               label="Industry Description"
               placeholder="Industry Description"
               isTextArea={true}
-              value={industry.description}
+              value={industry.description || ""}
               onChange={(e) =>
                 setIndustry({ ...industry, description: e.target.value })
               }
@@ -218,7 +277,7 @@ const Industry = () => {
             </FullRow>
             <TextInput
               label="Content Intro Heading"
-              value={industry.content_intro_heading}
+              value={industry.contentIntro.heading || ""}
               onChange={(e) =>
                 setIndustry({
                   ...industry,
@@ -239,7 +298,7 @@ const Industry = () => {
               label="Content Intro Content"
               placeholder="Content Intro"
               isTextArea={true}
-              value={industry.content_intro_content}
+              value={industry.contentIntro.content || ""}
               onChange={(e) =>
                 setIndustry({
                   ...industry,
@@ -286,7 +345,7 @@ const Industry = () => {
 
                   <TextInput
                     label={`Section ${index + 1} Heading`}
-                    value={section.heading}
+                    value={section.heading || ""}
                     onChange={(e) => {
                       let updatedSections = [...contentSections];
                       updatedSections[index].heading = e.target.value;
@@ -301,7 +360,7 @@ const Industry = () => {
                   />
                   <TextInput
                     label={`Section ${index + 1} Content`}
-                    value={section.sectionsData}
+                    value={section.sectionsData || ""}
                     isTextArea={true}
                     onChange={(e) => {
                       let updatedSections = [...contentSections];
@@ -334,7 +393,7 @@ const Industry = () => {
                       </div>
                       <TextInput
                         label={`Subsection ${subIndex + 1} Heading`}
-                        value={subsection.subheading}
+                        value={subsection.subheading || ""}
                         onChange={(e) => {
                           let updatedSections = [...contentSections];
                           updatedSections[index].subsections[
@@ -355,7 +414,7 @@ const Industry = () => {
                       />
                       <TextInput
                         label={`Subsection ${subIndex + 1} Content`}
-                        value={subsection.content}
+                        value={subsection.content || ""}
                         isTextArea={true}
                         onChange={(e) => {
                           let updatedSections = [...contentSections];
@@ -432,15 +491,6 @@ const Industry = () => {
                 onChange={(file) =>
                   setIndustry({ ...industry, image: file })
                 }
-              />
-              <TextInput
-                label="Image Name"
-                required={true}
-                value={industry.image_name}
-                onChange={(e) =>
-                  setIndustry({ ...industry, image_name: e.target.value })
-                }
-                error={errors.image_name ? errors.image_name[0] : ""}
               />
             </Card>
           </Column>

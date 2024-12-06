@@ -173,15 +173,15 @@ function App() {
               </Auth>
             }
           />
-          {/*<Route
-            path="/user/industry/edit/:id/:name"
+          <Route
+            path="/user/industry/edit/:id"
             element={
               <Auth>
-                <Industries />
+                <Industry />
               </Auth>
             }
           />
-          <Route
+          {/*<Route
             path="/user/industry/view/:id/:name"
             element={
               <Auth>
