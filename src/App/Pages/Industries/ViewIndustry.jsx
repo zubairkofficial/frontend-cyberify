@@ -53,7 +53,7 @@ const ViewIndustry = () => {
                             content: industryData.contentIntro?.content || ''
                         },
                         image: response.data.industry.featured_image,
-                        // use_cases : JSON.parse(response.data.industry.use_cases)
+                        use_cases : response.data.industry.use_cases_data
                     });
 
                     setContentSections(
@@ -77,12 +77,13 @@ const ViewIndustry = () => {
         getIndustry();
     }, [id]);
 
-    const selectedUseCaseNames = industry.use_cases
-    ? industry.use_cases.map(id => {
-        const useCase = useCases.find(useCase => useCase.id === id);
-        return useCase ? useCase.name : null;
-    }).filter(name => name !== null)
-    : [];
+    // const selectedUseCaseNames = industry.use_cases
+    // ? industry.use_cases.map(id => {
+
+    //     const useCase = useCases.find(useCase => useCase.id === id);
+    //     return useCase ? useCase.name : null;
+    // }).filter(name => name !== null)
+    // : [];
 
     return (
         <div className="d-flex flex-column flex-column-fluid">
@@ -108,13 +109,14 @@ const ViewIndustry = () => {
                                 <p>{industry.contentIntro?.content}</p>
                                 <div>
                                     <h5>Use Cases</h5>
-                                    {selectedUseCaseNames.length > 0 ? (
-                                        <ul>
-                                            {selectedUseCaseNames.map((name, index) => (
-                                                <li key={index}>{name}</li>
-                                            ))}
-                                        </ul>
-                                    ) : (
+                                    {industry.use_cases_data.length > 0 ? (
+                                    <ul className="d-flex gap-2 list-style-none">
+                                        {industry.use_cases_data.map((useCase, index) => (
+                                        <li key={index}>{useCase.name}</li>
+                                        ))}
+                                    </ul>
+                                    )  
+                                    : (
                                         <p>No use cases assigned</p>
                                     )}
                                 </div>

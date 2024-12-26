@@ -34,8 +34,8 @@ const Industry = () => {
 
   const [industry, setIndustry] = useState(defaultIndustry);
   const [useCases, setUseCases] = useState([]);
-  // const [selectedUseCases, setSelectedUseCases] = useState([]);
-  const [selectedUseCase, setSelectedUseCase] = useState();
+  const [selectedUseCases, setSelectedUseCases] = useState([]);
+  // const [selectedUseCase, setSelectedUseCase] = useState();
   const [contentSections, setContentSections] = useState([]);
   const [subsections, setSubsections] = useState([]);
   const [errors, setErrors] = useState({});
@@ -61,13 +61,14 @@ const Industry = () => {
   }, []);
   
 
-  // const handleUseCaseChange = (selectedOptions) => {
-  //   setSelectedUseCases(selectedOptions);
-  // };
+  const handleUseCaseChange = (selectedOptions) => {
+    console.log(selectedOptions)
+    setSelectedUseCases(selectedOptions);
+  };
 
   useEffect(() => {
-    console.log(selectedUseCase)
-  }, [selectedUseCase])
+    console.log(selectedUseCases)
+  }, [selectedUseCases])
 
 
   const getIndustry = () => {
@@ -79,6 +80,7 @@ const Industry = () => {
             ? JSON.parse(response.data.industry.industry_data)
             : {};
           console.log(industryData);
+          console.log(response.data);
           // Destructure industry data and set the states
           setIndustry({
             ...response.data.industry,
@@ -91,9 +93,9 @@ const Industry = () => {
             },
             image: response.data.industry.featured_image,
           });
-          // setSelectedUseCases(response.data.industry.use_cases
-          //   ? JSON.parse(response.data.industry.use_cases)
-          //   : [])
+          setSelectedUseCases(response.data.industry.use_case
+            ? JSON.parse(response.data.industry.use_case)
+            : [])
 
           // Set content sections (if any)
           setContentSections(
@@ -118,7 +120,7 @@ const Industry = () => {
       industry_slug: slugify(industry.title), // industry_name is the same as industry.title
       title: industry.heading, // Title is set as industry.heading
       featured_image: industry.image, // Featured image to send as file
-      use_case:selectedUseCase,
+      use_case:selectedUseCases,
       industry_data: {
         heroSection: {
           heading: industry.heading,
@@ -163,7 +165,7 @@ const Industry = () => {
     formData.append("industry_slug", data.industry_slug);
     formData.append("title", data.title);
     formData.append("industry_data", JSON.stringify(data.industry_data));
-    formData.append("use_case", data.use_case);
+    formData.append("use_case", JSON.stringify(data.use_case));
     // If there's an image file, append it
     if (industry.image instanceof File) {
       formData.append("featured_image", industry.image);
@@ -344,7 +346,7 @@ const Industry = () => {
                     }
                   />
                   <FullRow>
-                  {/* <MultiSelect 
+                  <MultiSelect 
     label="Select Use Cases" 
     placeholder="Use Cases" 
     value={selectedUseCases} 
@@ -353,9 +355,9 @@ const Industry = () => {
     isObject={true} 
     optionValue="id" 
     optionLabel="name" 
-/> */}
-                                        <BasicSelect options={useCases} isObject={true} optionLabel="name" optionValue="id" label="Select Use Case" required={true} 
-                                        value={selectedUseCase} onChange={e => setSelectedUseCase(e.target.value)} />
+/>
+                                        {/* <BasicSelect options={useCases} isObject={true} optionLabel="name" optionValue="id" label="Select Use Case" required={true} 
+                                        value={selectedUseCase} onChange={e => setSelectedUseCase(e.target.value)} /> */}
                   </FullRow>
                   <FullRow>
                     <div className="d-flex justify-content-start align-items-center">
