@@ -35,6 +35,9 @@ import CoverLetterTemplates from "./App/Pages/CoverLetterTemplates";
 import Keywords from "./App/Pages/Keyword";
 import Industries from "./App/Pages/Industries";
 import Industry from "./App/Pages/Industries/Industry";
+import ViewIndustry from "./App/Pages/Industries/ViewIndustry";
+import GalleryCategories from "./App/Pages/Gallery/GalleryCategories";
+import GalleryImages from "./App/Pages/Gallery/GalleryImages";
 
 const Auth = ({ children, isAuth = true }) => {
   let user = Helper.getItem("user", true);
@@ -181,14 +184,14 @@ function App() {
               </Auth>
             }
           />
-          {/*<Route
-            path="/user/industry/view/:id/:name"
+          <Route
+            path="/user/industry/view/:id"
             element={
               <Auth>
-                <Industries />
+                <ViewIndustry />
               </Auth>
             }
-          /> */}
+          />
 
           <Route
             path="/user/services"
@@ -302,6 +305,22 @@ function App() {
             element={
               <Auth>
                 <CoverLetterTemplates />
+              </Auth>
+            }
+          />
+          <Route
+            path="/user/gallery-categories"
+            element={
+              <Auth>
+                <GalleryCategories />
+              </Auth>
+            }
+          />
+          <Route
+            path="/user/gallery-images"
+            element={
+              <Auth>
+                <GalleryImages />
               </Auth>
             }
           />
