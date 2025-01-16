@@ -15,7 +15,6 @@ import ImageInput from "../../Components/ImageInput";
 import axios from "axios";
 import slugify from "slugify";
 import MultiSelect from "../../Components/MultiSelect";
-import QuillEditor from "../../Components/QuillEditor";
 
 const Industry = () => {
   const { id } = useParams();
@@ -23,10 +22,13 @@ const Industry = () => {
   const defaultIndustry = {
     title: "",
     heading: "",
+    description: "",
+    contentIntro: {
+      heading: "",
+      content: "",
+    },
     slug: "",
     image: null,
-    emailData: "",
-    emailImage : null,
     sections: [],
   };
 
@@ -40,7 +42,6 @@ const Industry = () => {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
 
-  console.log("editlog", industry);
   const navigate = useNavigate();
   useEffect(() => {
     // Fetch all use cases when the component mounts
@@ -48,9 +49,9 @@ const Industry = () => {
       .get(`${Helper.apiUrl}usecase/all`, Helper.authHeaders)
       .then((response) => {
         // Extract only the 'id' and 'name' from the response
-        const filteredUseCases = response.data.map((useCase) => ({
+        const filteredUseCases = response.data.map(useCase => ({
           id: useCase.id,
-          name: useCase.name,
+          name: useCase.name
         }));
         setUseCases(filteredUseCases); // Store the filtered use cases
       })
@@ -58,15 +59,17 @@ const Industry = () => {
         console.error("Error fetching use cases:", error);
       });
   }, []);
+  
 
   const handleUseCaseChange = (selectedOptions) => {
-    console.log(selectedOptions);
+    console.log(selectedOptions)
     setSelectedUseCases(selectedOptions);
   };
 
   useEffect(() => {
-    console.log(selectedUseCases);
-  }, [selectedUseCases]);
+    console.log(selectedUseCases)
+  }, [selectedUseCases])
+
 
   const getIndustry = () => {
     if (id) {
@@ -83,20 +86,16 @@ const Industry = () => {
             ...response.data.industry,
             title: response.data.industry.industry_name,
             heading: response.data.industry.title,
-            emailData: response.data.industry.email_data,
             description: industryData.heroSection?.description || "",
             contentIntro: {
               heading: industryData.contentIntro?.heading || "",
               content: industryData.contentIntro?.content || "",
             },
             image: response.data.industry.featured_image,
-            emailImage: response.data.industry.email_image,
           });
-          setSelectedUseCases(
-            response.data.industry.use_case
-              ? JSON.parse(response.data.industry.use_case)
-              : []
-          );
+          setSelectedUseCases(response.data.industry.use_case
+            ? JSON.parse(response.data.industry.use_case)
+            : [])
 
           // Set content sections (if any)
           setContentSections(
@@ -104,9 +103,6 @@ const Industry = () => {
               id: section.id,
               heading: section.heading,
               sectionsData: section.sectionsData,
-              sectionsImage: section.sectionsImage,
-              emailImage: section.emailImage,
-              emailData: section.emailData,
               subsections: section.subsections || [],
             })) || []
           );
@@ -124,116 +120,89 @@ const Industry = () => {
       industry_slug: slugify(industry.title), // industry_name is the same as industry.title
       title: industry.heading, // Title is set as industry.heading
       featured_image: industry.image, // Featured image to send as file
-      email_image: industry.emailImage,
-      email_data: industry.emailData, 
-      use_case: selectedUseCases,
+      use_case:selectedUseCases,
       industry_data: {
         heroSection: {
           heading: industry.heading,
+          description: industry.description,
+        },
+        tableIntroHeading: {
+          id: slugify(industry.contentIntro.heading),
+          heading: industry.contentIntro.heading,
+          subheadings: [],
+        },
+        tableOfContents: contentSections.map((section) => ({
+          id: slugify(section.heading),
+          heading: section.heading,
+          listItems: section.subsections.map((subsection) => ({
+            id: slugify(subsection.subheading),
+            text: subsection.subheading,
+          })),
+        })),
+        contentIntro: {
+          id: slugify(industry.contentIntro.heading),
+          heading: industry.contentIntro.heading,
+          content: industry.contentIntro.content,
         },
         contentSections: contentSections.map((section) => ({
           id: slugify(section.heading),
           heading: section.heading,
           sectionsData: section.sectionsData,
-          sectionsImage: section.sectionsImage,
           subsections: section.subsections.map((subsection) => ({
             id: slugify(subsection.subheading),
             subheading: subsection.subheading,
             content: subsection.content,
-            subsectionimage: subsection.subsectionimage,
           })),
         })),
       },
     };
+    console.log(data);
+    // return
+    // Prepare form data to include the image file and JSON data
     const formData = new FormData();
 
-    // Add main fields
-    formData.append("industry_name", industry.title);
-    formData.append("industry_slug", slugify(industry.title));
-    formData.append("title", industry.heading);
-    formData.append("email_data", industry.emailData);
-    formData.append("use_case", JSON.stringify(selectedUseCases));
-
-    // Add images and JSON for `contentSections`
-    const industryData = { ...data.industry_data, contentSections: [] };
-    contentSections.forEach((section, sectionIndex) => {
-      const sectionData = {
-        id: slugify(section.heading),
-        heading: section.heading,
-        sectionsData: section.sectionsData,
-        subsections: section.subsections.map((subsection, subIndex) => ({
-          id: slugify(subsection.subheading),
-          subheading: subsection.subheading,
-          content: subsection.content,
-          // Preserve existing subsection images
-          subsectionimage:
-            subsection.subsectionimage instanceof File
-              ? null // Don't include the File object in JSON, it's sent in FormData
-              : subsection.subsectionimage,
-        })),
-      };
-
-      // Add section image if it's a File
-      if (section.sectionsImage instanceof File) {
-        formData.append(
-          `contentSections[${sectionIndex}][sectionsImage]`,
-          section.sectionsImage
-        );
-      } else {
-        // Preserve existing image for the section
-        sectionData.sectionsImage = section.sectionsImage;
-      }
-
-      // Add subsection images if they are Files
-      section.subsections.forEach((subsection, subIndex) => {
-        if (subsection.subsectionimage instanceof File) {
-          formData.append(
-            `contentSections[${sectionIndex}][subsections][${subIndex}][subsectionimage]`,
-            subsection.subsectionimage
-          );
-        }
-      });
-
-      industryData.contentSections.push(sectionData);
-    });
-
-    formData.append("industry_data", JSON.stringify(industryData));
-
-    // Add featured image if it's a File
+    formData.append("industry_name", data.industry_name);
+    formData.append("industry_slug", data.industry_slug);
+    formData.append("title", data.title);
+    formData.append("industry_data", JSON.stringify(data.industry_data));
+    formData.append("use_case", JSON.stringify(data.use_case));
+    // If there's an image file, append it
     if (industry.image instanceof File) {
       formData.append("featured_image", industry.image);
+    } else if (industry.image) {
+      // If it's a URL (existing image), append a marker to let the API know to keep it
+      formData.append("featured_image", null); // Or any other appropriate logic
     }
-
-    if (industry.emailImage instanceof File) {
-      formData.append("email_image", industry.emailImage);
-    }
-
-    // Include ID if updating
     if (id) {
       formData.append("id", id);
     }
-
-    // Debug formData entries
     for (let [key, value] of formData.entries()) {
       console.log(key, value);
     }
-
-    // Send request
+    // return
+    // Make the API request to save the industry
     setLoading(true);
     axios
-      .post(`${Helper.apiUrl}industry/save`, formData, Helper.authFileHeaders)
+      .post(
+        `${Helper.apiUrl}industry/save`, // Your API endpoint for saving industry
+        formData, // Send the form data with image and JSON
+        Helper.authFileHeaders // Your authorization headers for the request
+      )
       .then((response) => {
         Helper.toast("success", response.data.message);
         setCurrentStep(2);
         setIndustry(response.data.industry);
         setContentSections(response.data.sections);
         setErrors({});
+        setCurrentStep(2);
       })
       .catch((error) => {
         Helper.toast("error", error.response.data.message);
         setErrors(error.response.data.errors || {});
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const addSection = () => {
@@ -258,7 +227,6 @@ const Industry = () => {
       id: updatedSections[sectionIndex].subsections.length + 1,
       subheading: "",
       content: "",
-      subsectionimage: null,
     });
     setContentSections(updatedSections);
   };
@@ -321,41 +289,76 @@ const Industry = () => {
                     }
                     error={errors.heading ? errors.heading[0] : ""}
                   />
-                  <FullRow>
-                    <MultiSelect
-                      label="Select Use Cases"
-                      placeholder="Use Cases"
-                      value={selectedUseCases}
-                      onChange={handleUseCaseChange}
-                      options={useCases}
-                      isObject={true}
-                      optionValue="id"
-                      optionLabel="name"
-                    />
+                  <TextInput
+                    label="Industry Description"
+                    placeholder="Industry Description"
+                    isTextArea={true}
+                    value={industry.description || ""}
+                    onChange={(e) =>
+                      setIndustry({ ...industry, description: e.target.value })
+                    }
+                    required={true}
+                    error={errors.description ? errors.description[0] : ""}
+                  />
 
-                    {/* <BasicSelect options={useCases} isObject={true} optionLabel="name" optionValue="id" label="Select Use Case" required={true} 
+                  <FullRow>
+                    <h3>Content Intro</h3>
+                    <br />
+                  </FullRow>
+                  <TextInput
+                    label="Content Intro Heading"
+                    value={industry.contentIntro.heading || ""}
+                    onChange={(e) =>
+                      setIndustry({
+                        ...industry,
+                        contentIntro: {
+                          ...industry.contentIntro,
+                          heading: e.target.value,
+                        },
+                      })
+                    }
+                    required={true}
+                    error={
+                      errors.content_intro_heading
+                        ? errors.content_intro_heading[0]
+                        : ""
+                    }
+                  />
+                  <TextInput
+                    label="Content Intro Content"
+                    placeholder="Content Intro"
+                    isTextArea={true}
+                    value={industry.contentIntro.content || ""}
+                    onChange={(e) =>
+                      setIndustry({
+                        ...industry,
+                        contentIntro: {
+                          ...industry.contentIntro,
+                          content: e.target.value,
+                        },
+                      })
+                    }
+                    required={true}
+                    error={
+                      errors.content_intro_content
+                        ? errors.content_intro_content[0]
+                        : ""
+                    }
+                  />
+                  <FullRow>
+                  <MultiSelect 
+    label="Select Use Cases" 
+    placeholder="Use Cases" 
+    value={selectedUseCases} 
+    onChange={handleUseCaseChange} 
+    options={useCases} 
+    isObject={true} 
+    optionValue="id" 
+    optionLabel="name" 
+/>
+                                        {/* <BasicSelect options={useCases} isObject={true} optionLabel="name" optionValue="id" label="Select Use Case" required={true} 
                                         value={selectedUseCase} onChange={e => setSelectedUseCase(e.target.value)} /> */}
                   </FullRow>
-                  {/* <FullRow>
-                    <QuillEditor
-                      label="Email Data"
-                      value={industry.emailData || ""}
-                      isTextArea={true}
-                      onChange={(content) =>
-                        setIndustry({ ...industry, emailData: content })
-                      }
-                      required={false}
-                    />
-
-                    <ImageInput
-                      value={industry.emailImage}
-                      label="Email Section Image"
-                      onChange={(file1) => {
-                        setIndustry({ ...industry, emailImage: file1 })
-                      }}
-                      id={"email-image-icon"}
-                    />
-                  </FullRow> */}
                   <FullRow>
                     <div className="d-flex justify-content-start align-items-center">
                       <h3>Sections</h3>
@@ -398,13 +401,14 @@ const Industry = () => {
                               : ""
                           }
                         />
-                        <QuillEditor
+                        <TextInput
                           label={`Section ${index + 1} Content`}
                           value={section.sectionsData || ""}
                           isTextArea={true}
-                          onChange={(content) => {
+                          onChange={(e) => {
                             let updatedSections = [...contentSections];
-                            updatedSections[index].sectionsData = content;
+                            updatedSections[index].sectionsData =
+                              e.target.value;
                             setContentSections(updatedSections);
                           }}
                           required={true}
@@ -413,18 +417,6 @@ const Industry = () => {
                               ? errors.sections[index].content[0]
                               : ""
                           }
-                        />
-
-                        <ImageInput
-                          value={section.sectionsImage}
-                          error={errors.image ? errors.image[0] : ""}
-                          label="Section Image"
-                          id={`section-image-${index}`}
-                          onChange={(file) => {
-                            let updateSections = [...contentSections];
-                            updateSections[index].sectionsImage = file;
-                            setContentSections(updateSections);
-                          }}
                         />
 
                         {section.subsections.map((subsection, subIndex) => (
@@ -443,7 +435,7 @@ const Industry = () => {
                                 </button>
                               </div>
                             </div>
-                            {/* <TextInput
+                            <TextInput
                               label={`Subsection ${subIndex + 1} Heading`}
                               value={subsection.subheading || ""}
                               onChange={(e) => {
@@ -463,16 +455,16 @@ const Industry = () => {
                                       .heading[0]
                                   : ""
                               }
-                            /> */}
-                            <QuillEditor
+                            />
+                            <TextInput
                               label={`Subsection ${subIndex + 1} Content`}
                               value={subsection.content || ""}
                               isTextArea={true}
-                              onChange={(content) => {
+                              onChange={(e) => {
                                 let updatedSections = [...contentSections];
                                 updatedSections[index].subsections[
                                   subIndex
-                                ].content = content;
+                                ].content = e.target.value;
                                 setContentSections(updatedSections);
                               }}
                               required={true}
@@ -485,19 +477,6 @@ const Industry = () => {
                                       .content[0]
                                   : ""
                               }
-                            />
-                            <ImageInput
-                              value={subsection.subsectionimage}
-                              error={errors.image ? errors.image[0] : ""}
-                              label="Subsection Image"
-                              id={`subsection-image-${index}-${subIndex}`}
-                              onChange={(file) => {
-                                let updatedSections = [...contentSections];
-                                updatedSections[index].subsections[
-                                  subIndex
-                                ].subsectionimage = file;
-                                setContentSections(updatedSections);
-                              }}
                             />
                           </div>
                         ))}

@@ -17,8 +17,10 @@ const UseCase = () => {
         name: "",
         short_description: "",
         project_overview: "",
+        about_the_client: "",
         challenge: "",
         solution: "",
+        result: "",
         loom_video_link: "",
         project_link: "",
         client_name: "",
@@ -83,8 +85,10 @@ const UseCase = () => {
                                 <TextInput error={errors.name ? errors.name[0] : ''} value={usecase.name} onChange={e => setUsecase({...usecase, name: e.target.value})} label="Case Name" />
                                 <TextInput error={errors.short_description ? errors.short_description[0] : ''} value={usecase.short_description} onChange={e => setUsecase({...usecase, short_description: e.target.value})} label="Short Description" />
                                 <TextInput isTextArea={true} error={errors.project_overview ? errors.project_overview[0] : ''} value={usecase.project_overview} onChange={e => setUsecase({...usecase, project_overview: e.target.value})} label="Project Overview" />
-                                <TextInput isTextArea={true} error={errors.challenge ? errors.challenge[0] : ''} value={usecase.challenge} onChange={e => setUsecase({...usecase, challenge: e.target.value})} label="Challenge" />
-                                <TextInput isTextArea={true} error={errors.solution ? errors.solution[0] : ''} value={usecase.solution} onChange={e => setUsecase({...usecase, solution: e.target.value})} label="Solution" />
+                                <TextInput isTextArea={true} error={errors.about_the_client ? errors.about_the_client[0] : ''} value={usecase.about_the_client} onChange={e => setUsecase({...usecase, about_the_client: e.target.value})} label="About The Client" />
+                                <TextInput  error={errors.challenge ? errors.challenge[0] : ''} value={usecase.challenge} onChange={e => setUsecase({...usecase, challenge: e.target.value})} label="Challenges" />
+                                <TextInput  error={errors.solution ? errors.solution[0] : ''} value={usecase.solution} onChange={e => setUsecase({...usecase, solution: e.target.value})} label="Solutions" />
+                                <TextInput  error={errors.result ? errors.result[0] : ''} value={usecase.result} onChange={e => setUsecase({...usecase, result: e.target.value})} label="Results" />
                                 <Row>
                                     <Column cols={6}>
                                         <TextInput error={errors.loom_video_link ? errors.loom_video_link[0] : ''} value={usecase.loom_video_link} onChange={e => setUsecase({...usecase, loom_video_link: e.target.value})} label="Loom Video ID" />
@@ -117,8 +121,8 @@ const UseCase = () => {
                             <Column cols={3}>
                                 <Card>
                                     <ImageInput value={thumbnail} error={errors.thumbnail ? errors.thumbnail[0] : ''} label="Upload Thumbnail" id={'useacse-thumbnail'} onChange={file => setUsecase({...usecase, thumbnail: file})} />
-                                    <ImageInput value={challengeImage} error={errors.challenge_image ? errors.challenge_image[0] : ''} label="Upload Challenge Image" id={'useacse-challenge'} onChange={file => setUsecase({...usecase, challenge_image: file})} />
-                                    <ImageInput value={solutionImage} error={errors.solution_image ? errors.solution_image[0] : ''} label="Upload Solution Image" id={'useacse-solution'} onChange={file => setUsecase({...usecase, solution_image: file})} />
+                                    <ImageInput value={challengeImage} error={errors.challenge_image ? errors.challenge_image[0] : ''} label="Upload Overview Image" id={'useacse-challenge'} onChange={file => setUsecase({...usecase, challenge_image: file})} />
+                                    <ImageInput value={solutionImage} error={errors.solution_image ? errors.solution_image[0] : ''} label="Upload Benefits Image" id={'useacse-solution'} onChange={file => setUsecase({...usecase, solution_image: file})} />
                                 </Card>
                             </Column>
                         </Row>

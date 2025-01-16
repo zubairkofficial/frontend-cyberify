@@ -41,7 +41,7 @@ const ImageInput = ({id, required = false, label = "", onChange, error, value = 
     return (
         <div>
             <label className={`fw-semibold fs-6 mb-2 ${required ? 'required' : ''}`}>{label}</label>
-            <label for={id}>
+            <label htmlFor={id}>
                 <div className="image-outer-placeholder" id={`preview-${id}`} onMouseEnter={() => setImageOpacity(0.5)} onMouseLeave={() => hasImage ? setImageOpacity(0) : null}>
                     <img className="image-placeholder" src={Helper.staticImage('assets/photo-1.png')} style={{ opacity: imageOpacity, backgroundColor: `${hasImage ? '#413f3f' : 'transparent'}` }} />
                 </div>

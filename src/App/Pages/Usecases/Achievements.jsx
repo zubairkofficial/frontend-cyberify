@@ -26,6 +26,7 @@ const Achievements = ({ id, achievements = [], getUsecase }) => {
             getUsecase();
             Helper.toast("success", response.data.message);
             setShowAchievementForm(false);
+            setAchievement(defaultAchievement);
         }).catch(error => {
             Helper.toast("error", error.response.data.message);
             setErrors(error.response.data.errors || {});

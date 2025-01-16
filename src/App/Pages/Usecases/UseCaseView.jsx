@@ -73,13 +73,20 @@ const UseCaseView = () => {
                                 <h1>{usecase.name}</h1>
                                 <p>{usecase.short_description}</p>
                                 <br />
+                                <h2>Project Overview</h2>
                                 <p>{usecase.project_overview}</p>
+                                <br/>
+                                <h2>About The Client</h2>
+                                <p>{usecase.about_the_client}</p>
                                 <br />
                                 <h2>Challenge</h2>
                                 <p>{ usecase.challenge }</p>
                                 <br />
                                 <h2>Solution</h2>
                                 <p>{ usecase.solution }</p>
+                                <br />
+                                <h2>Result</h2>
+                                <p>{ usecase.result }</p>
                                 <br />
                                 <Achievements id={id} achievements={usecase.usecase_achievements} getUsecase={getUsecase} />
                                 <br />
