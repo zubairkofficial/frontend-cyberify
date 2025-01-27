@@ -67,8 +67,8 @@ const MultiSelect = ({
   const dropdownListStyle = {
     position: 'relative',
     width: '100%',
-    maxHeight: '200px',
-    overflowY: 'auto',
+    // maxHeight: '200px',
+    // overflowY: 'auto',
     backgroundColor: '#fff',
     border: '1px solid #ccc',
     borderRadius: '5px',

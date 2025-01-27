@@ -15,6 +15,7 @@ import Spinner from "../../Components/Spinner";
 const UseCase = () => {
     const defaultUsecase = {
         name: "",
+        slug: "",
         short_description: "",
         project_overview: "",
         about_the_client: "",
@@ -82,7 +83,7 @@ const UseCase = () => {
                     <Card>
                         <Row>
                             <Column cols={9}>
-                                <TextInput error={errors.name ? errors.name[0] : ''} value={usecase.name} onChange={e => setUsecase({...usecase, name: e.target.value})} label="Case Name" />
+                                <TextInput error={errors.name ? errors.name[0] : ''} value={usecase.name} onChange={e => setUsecase({...usecase, name: e.target.value ,  slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})} label="Case Name" />
                                 <TextInput error={errors.short_description ? errors.short_description[0] : ''} value={usecase.short_description} onChange={e => setUsecase({...usecase, short_description: e.target.value})} label="Short Description" />
                                 <TextInput isTextArea={true} error={errors.project_overview ? errors.project_overview[0] : ''} value={usecase.project_overview} onChange={e => setUsecase({...usecase, project_overview: e.target.value})} label="Project Overview" />
                                 <TextInput isTextArea={true} error={errors.about_the_client ? errors.about_the_client[0] : ''} value={usecase.about_the_client} onChange={e => setUsecase({...usecase, about_the_client: e.target.value})} label="About The Client" />

@@ -70,8 +70,8 @@ const Service = () => {
                     <Card>
                         <Row>
                             <Column cols={9}>
-                                <TextInput error={errors.name ? errors.name[0] : ''} value={service.name} onChange={e => setService({...service, name: e.target.value})} label="Service Name" />
-                                <TextInput error={errors.description ? errors.description[0] : ''} value={service.description} onChange={e => setService({...service, description: e.target.value})} label="Short Tagline / Description" />
+                                <TextInput error={errors.name ? errors.name[0] : ''} value={service.name} onChange={e => setService({...service, name: e.target.value, service_slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})} label="Service Name" />
+                                <TextInput error={errors.description ? errors.description[0] : ''} value={service.description} onChange={e => setService({...service, description: e.target.value  })} label="Short Tagline / Description" />
                                 <TextInput error={errors.detailed_description ? errors.detailed_description[0] : ''} value={service.detailed_description} onChange={e => setService({...service, detailed_description: e.target.value})} label="Detailed Description" isTextArea={true} />
                                 <Column className={'simple-flex'} cols={12}>
                                     <button className="btn btn-primary btn-loading" onClick={saveService} disabled={loading}>{loading && <Spinner />}{loading ? "Please wait..." : "Save Service"}</button>

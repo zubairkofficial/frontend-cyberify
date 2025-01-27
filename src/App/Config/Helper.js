@@ -5,7 +5,7 @@ import 'notyf/notyf.min.css'
 class Helper {
   static localhost = '127.0.0.1:8000';
   static server = 'api.cyberify.co';
-  static basePath = `//${this.localhost}`;
+  static basePath = `//${this.localhost}`;;
   static apiUrl = `${this.basePath}/api/`;
   static openaiAPI = "sk-proj-Afwl98CcR91OEunAqSWxT3BlbkFJs8mB1GJeNXTKkwz8BK6D";
 
